@@ -1,0 +1,398 @@
+/* 
+ * Shortkeys:
+ *	Ctrl+Space	- content assist
+ * 	F3			- open declaration of selected element
+ *	Alt+S 		- open structure diagram
+ *  Alt+B 		- open behavior diagram
+ *  Alt+M 		- open textual editor (in diagrams)
+ */
+RoomModel Model {
+
+	import etrice.api.types.*
+
+	LogicalSystem LogSys {
+		SubSystemRef subSystemRef: CPU
+	}
+
+	SubSystemClass CPU {
+		ActorRef motors[4]: MotorDriver
+		ActorRef gyroscope: GyroscopeDriver
+		ActorRef accelerometer: AccelerometerDriver
+		ActorRef battery: BatteryDriver
+		ActorRef controlPanel: ControlPanelDriver
+		ActorRef gpu: GPUDriver
+		ActorRef targetCamera: CameraDriver
+		ActorRef obstacleCamera: CameraDriver
+		ActorRef controlLogic: ControlLogic
+
+		Binding motors.motor and controlLogic.motors
+		Binding motors.sensor and controlLogic.rpm
+		Binding battery.sensor and controlLogic.battery
+		Binding gpu.gpu and controlLogic.gpu
+		Binding targetCamera.camera and controlLogic.targetCamera
+		Binding obstacleCamera.camera and controlLogic.obstacleCamera
+		Binding gyroscope.sensor and controlLogic.gyroscope
+		Binding accelerometer.sensor and controlLogic.accelerometer
+		Binding controlPanel.userInput and controlLogic.userInput
+		Binding controlPanel.eventRecorder and controlLogic.eventRecorder
+
+		LogicalThread defaultThread
+	}
+
+	ActorClass MotorDriver {
+		Interface {
+			conjugated Port motor: ThrottleProtocol
+			conjugated Port sensor: RPMSensor
+		}
+		Structure {
+			external Port motor
+			external Port sensor
+		}
+	}
+
+	ActorClass GyroscopeDriver {
+		Interface {
+			conjugated Port sensor: GyroscopeSensor
+		}
+		Structure {
+			external Port sensor
+		}
+	}
+
+	ActorClass AccelerometerDriver {
+		Interface {
+			conjugated Port sensor: AccelerometerSensor
+		}
+		Structure {
+			external Port sensor
+		}
+	}
+
+	ActorClass BatteryDriver {
+		Interface {
+			conjugated Port sensor: BatterySensor
+		}
+		Structure {
+			external Port sensor
+		}
+	}
+
+	ActorClass ControlPanelDriver {
+		Interface {
+			conjugated Port userInput: UserInput
+			conjugated Port eventRecorder: EventRecorder
+		}
+		Structure {
+			external Port userInput
+			external Port eventRecorder
+		}
+	}
+
+	ActorClass CameraDriver {
+		Interface {
+			conjugated Port camera: Camera
+		}
+		Structure {
+			external Port camera
+		}
+	}
+
+	ActorClass GPUDriver {
+		Interface {
+			conjugated Port gpu: GPUProtocol
+		}
+		Structure {
+			external Port gpu
+		}
+	}
+
+	ActorClass ControlLogic {
+		Interface {
+			Port motors [4]: ThrottleProtocol
+			Port rpm [4]: RPMSensor
+			Port gyroscope: GyroscopeSensor
+			Port accelerometer: AccelerometerSensor
+			Port battery: BatterySensor
+			Port gpu: GPUProtocol
+			Port targetCamera: Camera
+			Port obstacleCamera: Camera
+			Port userInput: UserInput
+			Port eventRecorder: EventRecorder
+		}
+		Structure {
+			external Port eventRecorder
+			external Port gpu
+
+			conjugated Port gpuTarget: GPUProtocol
+			conjugated Port gpuObstacle: GPUProtocol
+			conjugated Port eventTarget: EventRecorder
+			conjugated Port eventObstacle: EventRecorder
+			conjugated Port eventMotors [4]: EventRecorder
+			conjugated Port eventBattery: EventRecorder
+
+			ActorRef motorMonitor[4]: MotorMonitor
+			ActorRef batteryMonitor: BatteryMonitor
+			ActorRef controlLoop: ControlLoop
+			ActorRef detectionAlgorithm: TargetDetectionAlgorithm
+			ActorRef avoidanceAlgorithm: ObstacleAvoidanceAlgorithm
+
+			Binding gpuTarget and detectionAlgorithm.gpu
+			Binding gpuObstacle and avoidanceAlgorithm.gpu
+			Binding detectionAlgorithm.camera and targetCamera
+			Binding detectionAlgorithm.event and eventTarget
+			Binding eventObstacle and avoidanceAlgorithm.event
+			Binding avoidanceAlgorithm.camera and obstacleCamera
+			Binding avoidanceAlgorithm.obstacle and controlLoop.obstacle
+			Binding motorMonitor.throttleOut and motors
+			Binding motorMonitor.rpm and rpm
+			Binding controlLoop.motors and motorMonitor.throttleIn
+			Binding eventMotors and motorMonitor.event
+			Binding batteryMonitor.battery and battery
+			Binding eventBattery and batteryMonitor.event
+			Binding batteryMonitor.status and controlLoop.battery
+			Binding accelerometer and controlLoop.accelerometer
+			Binding gyroscope and controlLoop.gyroscope
+			Binding userInput and controlLoop.userInput
+		}
+	}
+
+	ActorClass ControlLoop {
+		Interface {
+			Port obstacle: ObstacleAvoidance
+			Port motors [4]: ThrottleProtocol
+			Port battery: BatteryStatus
+			Port gyroscope: GyroscopeSensor
+			Port accelerometer: AccelerometerSensor
+			Port userInput: UserInput
+		}
+		Structure {
+			external Port obstacle
+			external Port motors
+			external Port battery
+			external Port gyroscope
+			external Port accelerometer
+			external Port userInput
+		}
+	}
+
+	ActorClass ObstacleAvoidanceAlgorithm {
+		Interface {
+			Port gpu: GPUProtocol
+			Port camera: Camera
+			Port event: EventRecorder
+			conjugated Port obstacle: ObstacleAvoidance
+		}
+		Structure {
+			external Port gpu
+			external Port camera
+			external Port event
+			external Port obstacle
+		}
+	}
+
+	ActorClass BatteryMonitor {
+		Interface {
+			Port battery: BatterySensor
+			Port event: EventRecorder
+			conjugated Port status: BatteryStatus
+		}
+		Structure {
+			external Port battery
+			external Port event
+			external Port status
+		}
+	}
+
+	ActorClass MotorMonitor {
+		Interface {
+			Port rpm: RPMSensor
+			Port event: EventRecorder
+			Port throttleOut: ThrottleProtocol
+			conjugated Port throttleIn: ThrottleProtocol
+		}
+		Structure {
+			external Port rpm
+			external Port event
+			external Port throttleOut
+			external Port throttleIn
+		}
+	}
+
+	ActorClass TargetDetectionAlgorithm {
+		Interface {
+			Port gpu: GPUProtocol
+			Port camera: Camera
+			Port event: EventRecorder
+		}
+		Structure {
+			external Port gpu
+			external Port camera
+			external Port event
+		}
+	}
+
+	ExternalType Kernel -> "void (*)(...)"
+
+	Enumeration FlightMode {
+		Manual,
+		Stabilized
+	}
+
+	Enumeration EventType {
+		BatteryCritical,
+		MotorFailure,
+		ObstacleDetected,
+		SensorFailure,
+		TargetDetected
+	}
+
+	Enumeration GPUFaultType {
+		ControlFlowDivergence
+	}
+
+	DataClass Vector2 {
+		Attribute x: float32
+		Attribute y: float32
+	}
+
+	DataClass Vector3 {
+		Attribute x: float32
+		Attribute y: float32
+		Attribute z: float32
+	}
+
+	DataClass Vector4 {
+		Attribute x: float32
+		Attribute y: float32
+		Attribute z: float32
+		Attribute q: float32
+	}
+
+	DataClass Event {
+		Attribute critical: boolean
+		Attribute type: EventType
+		Attribute arg: uint32
+	}
+
+	DataClass GPUFaultInfo {
+		Attribute type: GPUFaultType
+		Attribute arg: uint32
+	}
+
+	DataClass WriteRequest {
+		Attribute address: uint32
+		Attribute value: uint32
+	}
+
+	DataClass KernelArguments {
+		Attribute queue: uint32
+		Attribute address: uint32
+		Attribute startId: uint32
+		Attribute numBlocks: uint32
+		Attribute tag: uint32
+		Attribute flags: uint32
+	}
+
+	ProtocolClass ThrottleProtocol {
+		outgoing {
+			Message SetThrottle(uint16)
+		}
+	}
+
+	ProtocolClass SensorProtocol {
+		incoming {
+			Message SensorError()
+		}
+	}
+
+	ProtocolClass PollingSensor extends SensorProtocol {
+		outgoing {
+			Message Get()
+		}
+	}
+
+	ProtocolClass InterruptSensor extends SensorProtocol {
+		outgoing {
+			Message SetSamplingRate(uint16)
+		}
+	}
+
+	ProtocolClass RPMSensor extends PollingSensor {
+		incoming {
+			Message Value(uint16)
+		}
+	}
+
+	ProtocolClass GyroscopeSensor extends InterruptSensor {
+		incoming {
+			Message Value(Vector3)
+		}
+	}
+
+	ProtocolClass AccelerometerSensor extends InterruptSensor {
+		incoming {
+			Message Value(Vector3)
+		}
+	}
+
+	ProtocolClass BatterySensor extends PollingSensor {
+		incoming {
+			Message Value(uint16)
+		}
+	}
+
+	ProtocolClass Camera {
+		incoming {
+			Message FrameReady()
+		}
+		outgoing {
+			Message SetFps(uint8)
+		}
+	}
+
+	ProtocolClass UserInput {
+		incoming {
+			Message SetArmState(boolean)
+			Message SetFlightMode(FlightMode)
+			Message Value(Vector4)
+		}
+		outgoing {
+			Message SetSamplingRate(uint16)
+		}
+	}
+
+	ProtocolClass EventRecorder {
+		outgoing {
+			Message LogEvent(Event)
+		}
+	}
+
+	ProtocolClass GPUProtocol {
+		incoming {
+			Message KernelComplete(uint32)
+			Message Fault(GPUFaultInfo)
+			Message Result(uint32)
+		}
+		outgoing {
+			Message ReadMem(uint32)
+			Message WriteMem(WriteRequest)
+			Message IssueKernel(KernelArguments)
+			Message CompileKernel(Kernel)
+		}
+	}
+
+	ProtocolClass ObstacleAvoidance {
+		incoming {
+			Message Target(Vector2)
+		}
+	}
+
+	ProtocolClass BatteryStatus {
+		incoming {
+			Message Response(boolean)
+		}
+		outgoing {
+			Message Request()
+		}
+	}
+}
