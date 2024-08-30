@@ -5,17 +5,17 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "obstacle_avoidance_poc", "obstacle_avoidance_poc.csproj", "{40982A17-9DE3-4CBB-85BA-D944C5BE5595}"
 EndProject
 Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{40982A17-9DE3-4CBB-85BA-D944C5BE5595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40982A17-9DE3-4CBB-85BA-D944C5BE5595}.Debug|Any CPU.Build.0 = Debug|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B376285E-28A1-405C-A0B0-024EAD91C17C}
-	EndGlobalSection
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {40982A17-9DE3-4CBB-85BA-D944C5BE5595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {40982A17-9DE3-4CBB-85BA-D944C5BE5595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    EndGlobalSection
+    GlobalSection(SolutionProperties) = preSolution
+        HideSolutionNode = FALSE
+    EndGlobalSection
+    GlobalSection(ExtensibilityGlobals) = postSolution
+        SolutionGuid = {B376285E-28A1-405C-A0B0-024EAD91C17C}
+    EndGlobalSection
 EndGlobal
