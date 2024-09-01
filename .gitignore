@@ -1,0 +1,11 @@
+linear_engine/project/db/
+linear_engine/project/incremental_db/
+linear_engine/project/output_files/*
+*.ver
+*.qws
+c5_pin_model_dump.txt
+
+!linear_engine/project/output_files/*.sof
+!linear_engine/project/output_files/*.cdf
+
+doc-gen/
