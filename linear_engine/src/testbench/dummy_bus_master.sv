@@ -1,3 +1,5 @@
+`include "../bus/bus_if.svh"
+
 module dummy_bus_master #(
     parameter int Id
 ) (

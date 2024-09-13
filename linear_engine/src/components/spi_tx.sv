@@ -22,7 +22,7 @@ module spi_tx #(
 
     wire spi_clk_edge = !spi_clk_d2 & spi_clk_d1;
 
-    assign ready    = !writing;
+    assign ready    = !writing && counter == '0 && !spi_clk_edge;
     assign spi_miso = spi_miso_reg;
 
     always @(posedge clk) begin
@@ -37,7 +37,7 @@ module spi_tx #(
                 writing <= '0;
             end
         end
-        if (!writing && send) begin
+        if (ready && send) begin
             data_reg <= data;
             writing  <= '1;
         end

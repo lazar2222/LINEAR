@@ -32,8 +32,8 @@ module pattern_gen #(
         end
     endgenerate
 
-    wire [ PatternWidthBits-1:0] x_pattern_position = x[PatternWidthBits-1+PatchWidthBits:PatchWidthBits];
-    wire [PatternHeightBits-1:0] y_pattern_position = y[PatternHeightBits-1+PatchHeightBits:PatchHeightBits];
+    wire [ PatternWidthBits-1:0] x_pattern_position = x[PatchWidthBits+:PatternWidthBits];
+    wire [PatternHeightBits-1:0] y_pattern_position = y[PatchHeightBits+:PatternHeightBits];
 
     assign out = pattern_vector[y_pattern_position][x_pattern_position];
 

@@ -34,7 +34,7 @@ module spi_rx #(
             data_reg <= {data_reg[DataWidth-2:0], spi_mosi};
             if (counter == DataWidth - 1'd1) begin
                 valid_reg <= '1;
-                counter  <= '0;
+                counter   <= '0;
             end
         end
         if (valid_reg) begin

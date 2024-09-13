@@ -190,131 +190,131 @@ add wave -noupdate -expand -group slaves -expand -group smc_a /testbench_bus/smc
 add wave -noupdate -expand -group slaves -expand -group smc_a /testbench_bus/smc_a/complete
 add wave -noupdate -expand -group slaves -expand -group smc_a /testbench_bus/smc_a/error
 
-add wave -noupdate -expand -group filters -expand -group mf_sm0_im -label im0 /testbench_bus/bus_matrix_inst/mem_filter_sm0_im/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm0_im -label im1 /testbench_bus/bus_matrix_inst/mem_filter_sm0_im_pass1/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_im -label im0 /testbench_bus/bus_matrix_inst/bus_filter_sm0_im/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_im -label im1 /testbench_bus/bus_matrix_inst/bus_filter_sm0_im_pass1/filter_hit
 
-add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label im0 /testbench_bus/bus_matrix_inst/mem_filter_sm0_dm/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label dm0 /testbench_bus/bus_matrix_inst/mem_filter_sm0_dm_pass1/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label cm0 /testbench_bus/bus_matrix_inst/mem_filter_sm0_dm_pass2/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label im1 /testbench_bus/bus_matrix_inst/mem_filter_sm0_dm_pass3/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label dm1 /testbench_bus/bus_matrix_inst/mem_filter_sm0_dm_pass4/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label cm1 /testbench_bus/bus_matrix_inst/mem_filter_sm0_dm_pass5/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label smc /testbench_bus/bus_matrix_inst/mem_filter_sm0_dm_pass6/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label im0 /testbench_bus/bus_matrix_inst/bus_filter_sm0_dm/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label dm0 /testbench_bus/bus_matrix_inst/bus_filter_sm0_dm_pass1/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label cm0 /testbench_bus/bus_matrix_inst/bus_filter_sm0_dm_pass2/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label im1 /testbench_bus/bus_matrix_inst/bus_filter_sm0_dm_pass3/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label dm1 /testbench_bus/bus_matrix_inst/bus_filter_sm0_dm_pass4/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label cm1 /testbench_bus/bus_matrix_inst/bus_filter_sm0_dm_pass5/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm0_dm -label smc /testbench_bus/bus_matrix_inst/bus_filter_sm0_dm_pass6/filter_hit
 
-add wave -noupdate -expand -group filters -expand -group mf_sm1_im -label im0 /testbench_bus/bus_matrix_inst/mem_filter_sm1_im/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm1_im -label im1 /testbench_bus/bus_matrix_inst/mem_filter_sm1_im_pass1/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_im -label im0 /testbench_bus/bus_matrix_inst/bus_filter_sm1_im/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_im -label im1 /testbench_bus/bus_matrix_inst/bus_filter_sm1_im_pass1/filter_hit
 
-add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label im0 /testbench_bus/bus_matrix_inst/mem_filter_sm1_dm/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label dm0 /testbench_bus/bus_matrix_inst/mem_filter_sm1_dm_pass1/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label cm0 /testbench_bus/bus_matrix_inst/mem_filter_sm1_dm_pass2/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label im1 /testbench_bus/bus_matrix_inst/mem_filter_sm1_dm_pass3/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label dm1 /testbench_bus/bus_matrix_inst/mem_filter_sm1_dm_pass4/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label cm1 /testbench_bus/bus_matrix_inst/mem_filter_sm1_dm_pass5/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label smc /testbench_bus/bus_matrix_inst/mem_filter_sm1_dm_pass6/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label im0 /testbench_bus/bus_matrix_inst/bus_filter_sm1_dm/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label dm0 /testbench_bus/bus_matrix_inst/bus_filter_sm1_dm_pass1/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label cm0 /testbench_bus/bus_matrix_inst/bus_filter_sm1_dm_pass2/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label im1 /testbench_bus/bus_matrix_inst/bus_filter_sm1_dm_pass3/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label dm1 /testbench_bus/bus_matrix_inst/bus_filter_sm1_dm_pass4/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label cm1 /testbench_bus/bus_matrix_inst/bus_filter_sm1_dm_pass5/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_sm1_dm -label smc /testbench_bus/bus_matrix_inst/bus_filter_sm1_dm_pass6/filter_hit
 
-add wave -noupdate -expand -group filters -expand -group mf_hab -label im0 /testbench_bus/bus_matrix_inst/mem_filter_hab/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_hab -label dm0 /testbench_bus/bus_matrix_inst/mem_filter_hab_pass1/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_hab -label cm0 /testbench_bus/bus_matrix_inst/mem_filter_hab_pass2/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_hab -label im1 /testbench_bus/bus_matrix_inst/mem_filter_hab_pass3/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_hab -label dm1 /testbench_bus/bus_matrix_inst/mem_filter_hab_pass4/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_hab -label cm1 /testbench_bus/bus_matrix_inst/mem_filter_hab_pass5/filter_hit
-add wave -noupdate -expand -group filters -expand -group mf_hab -label smc /testbench_bus/bus_matrix_inst/mem_filter_hab_pass6/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_hab -label im0 /testbench_bus/bus_matrix_inst/bus_filter_hab/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_hab -label dm0 /testbench_bus/bus_matrix_inst/bus_filter_hab_pass1/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_hab -label cm0 /testbench_bus/bus_matrix_inst/bus_filter_hab_pass2/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_hab -label im1 /testbench_bus/bus_matrix_inst/bus_filter_hab_pass3/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_hab -label dm1 /testbench_bus/bus_matrix_inst/bus_filter_hab_pass4/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_hab -label cm1 /testbench_bus/bus_matrix_inst/bus_filter_hab_pass5/filter_hit
+add wave -noupdate -expand -group filters -expand -group mf_hab -label smc /testbench_bus/bus_matrix_inst/bus_filter_hab_pass6/filter_hit
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im0/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im0/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im0/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im0/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im0/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im0/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im0/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im0/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im0/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im0/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im0/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im0/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im0/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im0/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im0/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im0/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im0/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im0/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im0/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im0/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im0/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im0/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im0/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im0/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im0/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im0/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im0/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im0/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im0/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im0/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im0/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im0/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im0/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im0/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im0/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im0/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im0/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im0/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im0/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im0/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im0/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im0/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm0/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm0/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm0/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm0/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm0/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm0/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm0/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm0/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm0/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm0/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm0/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm0/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm0/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm0/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm0/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm0/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm0/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm0/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm0/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm0/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm0/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm0/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm0/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm0/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm0/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm0/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm0/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm0 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm0/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im1/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im1/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im1/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im1/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im1/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im1/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_im1/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im1/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im1/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im1/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im1/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im1/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im1/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_im1/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im1/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im1/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im1/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im1/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im1/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im1/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_sm0_dm_im1/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im1/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im1/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im1/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im1/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im1/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im1/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm0_dm_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_sm0_dm_im1/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im1/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im1/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im1/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im1/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im1/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im1/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_im1/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im1/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im1/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im1/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im1/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im1/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im1/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_im1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_im1/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm1/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm1/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm1/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm1/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm1/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm1/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_dm1/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm1/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm1/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm1/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm1/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm1/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm1/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_dm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_dm1/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm1/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm1/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm1/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm1/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm1/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm1/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/mem_arbiter_hab_cm1/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm1/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm1/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm1/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm1/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm1/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm1/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_cm1 /testbench_bus/bus_matrix_inst/bus_arbiter_hab_cm1/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_smc/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_smc/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_smc/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_smc/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_smc/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_smc/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/mem_arbiter_sm1_dm_smc/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_smc/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_smc/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_smc/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_smc/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_smc/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_smc/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_sm1_dm_smc /testbench_bus/bus_matrix_inst/bus_arbiter_sm1_dm_smc/arbiter/contention
 
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_smc /testbench_bus/bus_matrix_inst/mem_arbiter_hab_smc/grant_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_smc /testbench_bus/bus_matrix_inst/mem_arbiter_hab_smc/grant_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_smc /testbench_bus/bus_matrix_inst/mem_arbiter_hab_smc/request_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_smc /testbench_bus/bus_matrix_inst/mem_arbiter_hab_smc/request_b
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_smc /testbench_bus/bus_matrix_inst/mem_arbiter_hab_smc/complete
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_smc /testbench_bus/bus_matrix_inst/mem_arbiter_hab_smc/arbiter/priority_a
-add wave -noupdate -expand -group arbiters -expand -group mem_arbiter_hab_smc /testbench_bus/bus_matrix_inst/mem_arbiter_hab_smc/arbiter/contention
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_smc /testbench_bus/bus_matrix_inst/bus_arbiter_hab_smc/grant_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_smc /testbench_bus/bus_matrix_inst/bus_arbiter_hab_smc/grant_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_smc /testbench_bus/bus_matrix_inst/bus_arbiter_hab_smc/request_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_smc /testbench_bus/bus_matrix_inst/bus_arbiter_hab_smc/request_b
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_smc /testbench_bus/bus_matrix_inst/bus_arbiter_hab_smc/complete
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_smc /testbench_bus/bus_matrix_inst/bus_arbiter_hab_smc/arbiter/priority_a
+add wave -noupdate -expand -group arbiters -expand -group bus_arbiter_hab_smc /testbench_bus/bus_matrix_inst/bus_arbiter_hab_smc/arbiter/contention
 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ps} 0}
