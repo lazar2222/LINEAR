@@ -74,7 +74,7 @@ module pll #(
         .outclk  (outclk),
         .locked  (locked),
         .fboutclk(),
-        .fbclk   (1'b0),
+        .fbclk   ('0),
         .refclk  (refclk)
     );
 

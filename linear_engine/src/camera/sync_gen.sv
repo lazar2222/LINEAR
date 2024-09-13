@@ -16,9 +16,9 @@ module sync_gen #(
     v_sync,
     visible_area
 );
-    localparam int HorizontalWhole     = HorizontalVisibleArea + HorizontalFrontPorch + HorizontalSyncPulse + HorizontalBackPorch - 1;
+    localparam int HorizontalWhole     = HorizontalVisibleArea + HorizontalFrontPorch + HorizontalSyncPulse + HorizontalBackPorch;
     localparam int HorizontalSyncStart = HorizontalVisibleArea + HorizontalFrontPorch;
-    localparam int VerticalWhole       = VerticalVisibleArea   + VerticalFrontPorch   + VerticalSyncPulse   + VerticalBackPorch   - 1;
+    localparam int VerticalWhole       = VerticalVisibleArea   + VerticalFrontPorch   + VerticalSyncPulse   + VerticalBackPorch;
     localparam int VerticalSyncStart   = VerticalVisibleArea   + VerticalFrontPorch;
     localparam int HorizontalBits      = $clog2(HorizontalWhole);
     localparam int VerticalBits        = $clog2(VerticalWhole);
@@ -39,10 +39,10 @@ module sync_gen #(
 
     always @(posedge clk) begin
         x <= x + 1'd1;
-        if (x == HorizontalWhole) begin
+        if (x == HorizontalWhole - 1'd1) begin
             x <= '0;
             y <= y + 1'd1;
-            if (y == VerticalWhole) begin
+            if (y == VerticalWhole - 1'd1) begin
                 y <= '0;
             end
         end
