@@ -1,16 +1,15 @@
-module spi_tx #(
-    parameter int DataWidth
-) (
+`include "../interfaces/parallel_if.svh"
+
+module spi_tx (
     input clk,
     input rst,
 
     input  spi_clk,
     output spi_miso,
 
-    input  [DataWidth-1:0] data,
-    input                  send,
-    output                 ready
+    parallel_tx_if.tx parallel_tx
 );
+    localparam int DataWidth    = $bits(parallel_tx.data);
     localparam int CounterWidth = $clog2(DataWidth);
 
     reg [   DataWidth-1:0] data_reg;
@@ -22,8 +21,8 @@ module spi_tx #(
 
     wire spi_clk_edge = !spi_clk_d2 & spi_clk_d1;
 
-    assign ready    = !writing && counter == '0 && !spi_clk_edge;
-    assign spi_miso = spi_miso_reg;
+    assign parallel_tx.ready = !writing && counter == '0 && !spi_clk_edge;
+    assign spi_miso          = spi_miso_reg;
 
     always @(posedge clk) begin
         spi_clk_d2 <= spi_clk_d1;
@@ -37,8 +36,8 @@ module spi_tx #(
                 writing <= '0;
             end
         end
-        if (ready && send) begin
-            data_reg <= data;
+        if (parallel_tx.send && parallel_tx.ready) begin
+            data_reg <= parallel_tx.data;
             writing  <= '1;
         end
         if (rst) begin

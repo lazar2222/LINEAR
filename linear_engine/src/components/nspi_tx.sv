@@ -1,5 +1,6 @@
+`include "../interfaces/parallel_if.svh"
+
 module nspi_tx #(
-    parameter int DataWidth,
     parameter int InstanceCount
 ) (
     input clk,
@@ -8,28 +9,27 @@ module nspi_tx #(
     input                      spi_clk,
     output [InstanceCount-1:0] spi_miso,
 
-    input  [DataWidth-1:0] data,
-    input                  send,
-    output                 ready
+    parallel_tx_if.tx parallel_tx
 );
+    localparam int DataWidth     = $bits(parallel_tx.data);
     localparam int InstanceWidth = DataWidth / InstanceCount;
 
     wire [InstanceCount-1:0] readys;
 
-    assign ready = &readys;
+    assign parallel_tx.ready = &readys;
 
     genvar i;
     generate
         for (i = 0; i < InstanceCount; i++) begin : g_nspi_tx_instance
             spi_tx #(
                 .DataWidth(InstanceWidth)
-            ) spi_tx_inst (
+            ) spi_tx (
                 .clk     (clk),
                 .rst     (rst),
                 .spi_clk (spi_clk),
                 .spi_miso(spi_miso[i]),
-                .data    (data[InstanceWidth*i+:InstanceWidth]),
-                .send    (send),
+                .data    (parallel_tx.data[InstanceWidth*i+:InstanceWidth]),
+                .send    (parallel_tx.send),
                 .ready   (readys[i])
             );
         end

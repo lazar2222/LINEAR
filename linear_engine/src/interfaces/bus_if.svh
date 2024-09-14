@@ -51,4 +51,4 @@ interface bus_if #(
 
 endinterface
 
-`endif  //BUS_IF__SVH
+`endif //BUS_IF__SVH

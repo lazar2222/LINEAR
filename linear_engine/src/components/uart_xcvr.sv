@@ -1,5 +1,6 @@
+`include "../interfaces/parallel_if.svh"
+
 module uart_xcvr #(
-    parameter int DataWidth,
     parameter int ClockRate,
     parameter int BaudRate
 ) (
@@ -9,35 +10,32 @@ module uart_xcvr #(
     input  rx,
     output tx,
 
-    input  [DataWidth-1:0] data_tx,
-    output [DataWidth-1:0] data_rx,
-    input                  send,
-    output                 ready,
-    output                 valid
+    parallel_xcvr_if.xcvr parallel_xcvr
 );
+    localparam int DataWidth = $bits(parallel_xcvr.data_rx);
+
+    `PARALLEL_IF__XCVR_BREAKDOWN(parallel_xcvr, parallel_xcvr_tx, parallel_xcvr_rx);
+
     uart_tx #(
         .DataWidth(DataWidth),
         .ClockRate(ClockRate),
         .BaudRate (BaudRate)
-    ) uart_tx_inst (
-        .clk  (clk),
-        .rst  (rst),
-        .tx   (tx),
-        .data (data_tx),
-        .send (send),
-        .ready(ready)
+    ) uart_tx (
+        .clk        (clk),
+        .rst        (rst),
+        .tx         (tx),
+        .parallel_tx(parallel_xcvr_tx)
     );
 
     uart_rx #(
         .DataWidth(DataWidth),
         .ClockRate(ClockRate),
         .BaudRate (BaudRate)
-    ) uart_rx_inst (
-        .clk  (clk),
-        .rst  (rst),
-        .rx   (rx),
-        .data (data_rx),
-        .valid(valid)
+    ) uart_rx (
+        .clk        (clk),
+        .rst        (rst),
+        .rx         (rx),
+        .parallel_rx(parallel_xcvr_rx)
     );
 
 endmodule

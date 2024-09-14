@@ -1,15 +1,15 @@
-module spi_rx #(
-    parameter int DataWidth
-) (
+`include "../interfaces/parallel_if.svh"
+
+module spi_rx (
     input clk,
     input rst,
 
     input spi_clk,
     input spi_mosi,
 
-    output [DataWidth-1:0] data,
-    output                 valid
+    parallel_rx_if.rx parallel_rx
 );
+    localparam int DataWidth    = $bits(parallel_rx.data);
     localparam int CounterWidth = $clog2(DataWidth);
 
     reg [   DataWidth-1:0] data_reg;
@@ -21,8 +21,8 @@ module spi_rx #(
 
     wire spi_clk_edge = spi_clk_d2 & !spi_clk_d1;
 
-    assign data  = data_reg;
-    assign valid = valid_reg;
+    assign parallel_rx.data  = data_reg;
+    assign parallel_rx.valid = valid_reg;
 
     always @(posedge clk) begin
         spi_clk_d2  <= spi_clk_d1;

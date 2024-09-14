@@ -1,5 +1,6 @@
+`include "../interfaces/parallel_if.svh"
+
 module nspi_xcvr #(
-    parameter int DataWidth,
     parameter int InstanceCount
 ) (
     input clk,
@@ -9,35 +10,31 @@ module nspi_xcvr #(
     input  [InstanceCount-1:0] spi_mosi,
     output [InstanceCount-1:0] spi_miso,
 
-    input  [DataWidth-1:0] data_tx,
-    output [DataWidth-1:0] data_rx,
-    input                  send,
-    output                 ready,
-    output                 valid
+    parallel_xcvr_if.xcvr parallel_xcvr
 );
+    localparam int DataWidth = $bits(parallel_xcvr.data_rx);
+
+    `PARALLEL_IF__XCVR_BREAKDOWN(parallel_xcvr, parallel_xcvr_tx, parallel_xcvr_rx);
+
     nspi_tx #(
         .DataWidth    (DataWidth),
         .InstanceCount(InstanceCount)
-    ) nspi_tx_inst (
-        .clk     (clk),
-        .rst     (rst),
-        .spi_clk (spi_clk),
-        .spi_miso(spi_miso),
-        .data    (data_tx),
-        .send    (send),
-        .ready   (ready)
+    ) nspi_tx (
+        .clk        (clk),
+        .rst        (rst),
+        .spi_clk    (spi_clk),
+        .spi_miso   (spi_miso),
+        .parallel_tx(parallel_xcvr_tx)
     );
 
     nspi_rx #(
         .DataWidth    (DataWidth),
         .InstanceCount(InstanceCount)
-    ) nspi_rx_inst (
-        .clk     (clk),
-        .rst     (rst),
-        .spi_clk (spi_clk),
-        .spi_mosi(spi_mosi),
-        .data    (data_rx),
-        .valid   (valid)
+    ) nspi_rx (
+        .clk        (clk),
+        .rst        (rst),
+        .spi_clk    (spi_clk),
+        .parallel_rx(parallel_xcvr_rx)
     );
 
 endmodule

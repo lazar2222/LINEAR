@@ -1,4 +1,4 @@
-`include "../bus/bus_if.svh"
+`include "../interfaces/bus_if.svh"
 
 module dummy_bus_master #(
     parameter int Id
@@ -6,7 +6,7 @@ module dummy_bus_master #(
     input clk,
     input rst,
 
-    bus_if.master port
+    bus_if.master bus
 );
     reg [14:0] target_device;
     reg [10:0] target_local_address;
@@ -14,16 +14,16 @@ module dummy_bus_master #(
     reg        write;
     reg        in_progress;
 
-    assign port.data_ctp    = Id;
-    assign port.address     = {target_device, target_local_address};
-    assign port.byte_enable = port.address;
-    assign port.read        = read;
-    assign port.write       = write;
+    assign bus.data_ctp    = Id;
+    assign bus.address     = {target_device, target_local_address};
+    assign bus.byte_enable = bus.address;
+    assign bus.read        = read;
+    assign bus.write       = write;
 
     int random_op;
 
     always @(posedge clk) begin
-        if (!in_progress || port.complete || !port.hit) begin
+        if (!in_progress || bus.complete || !bus.hit) begin
             random_op = $urandom_range(0, 2);
             read                 <= random_op == 0;
             write                <= random_op == 1;

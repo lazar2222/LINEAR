@@ -1,3 +1,5 @@
+`include "../interfaces/parallel_if.svh"
+
 module testbench_xcvr ();
 
     reg clk;
@@ -19,63 +21,48 @@ module testbench_xcvr ();
     localparam int ClockRate = 100;
     localparam int BaudRate  = 10;
 
-    wire       data;
-    wire       send;
-    wire       ready;
-    wire       valid;
-    wire       spi_data;
-    wire       spi_ready;
-    wire       spi_valid;
-    wire [7:0] spi_data_out;
-    wire [7:0] data_in;
-    wire [7:0] data_out;
+    wire uart_data;
+    wire spi_data;
+
+    parallel_tx_if #(DataWidth) parallel_tx_uart();
+    parallel_rx_if #(DataWidth) parallel_rx_uart();
+    parallel_tx_if #(DataWidth) parallel_tx_spi();
+    parallel_rx_if #(DataWidth) parallel_rx_spi();
 
     uart_tx #(
-        .DataWidth(DataWidth),
         .ClockRate(ClockRate),
         .BaudRate (BaudRate)
-    ) uart_tx_inst (
-        .clk  (clk),
-        .rst  (rst),
-        .tx   (data),
-        .data (data_in),
-        .send (send),
-        .ready(ready)
+    ) uart_tx (
+        .clk        (clk),
+        .rst        (rst),
+        .tx         (uart_data),
+        .parallel_tx(parallel_tx_uart)
     );
 
     uart_rx #(
-        .DataWidth(DataWidth),
         .ClockRate(ClockRate),
         .BaudRate (BaudRate)
-    ) uart_rx_inst (
-        .clk  (clk),
-        .rst  (rst),
-        .rx   (data),
-        .data (data_out),
-        .valid(valid)
+    ) uart_rx (
+        .clk        (clk),
+        .rst        (rst),
+        .rx         (uart_data),
+        .parallel_rx(parallel_rx_uart)
     );
 
-    spi_tx #(
-        .DataWidth(DataWidth)
-    ) spi_tx_inst (
-        .clk     (clk),
-        .rst     (rst),
-        .spi_clk (spi_clk),
-        .spi_miso(spi_data),
-        .data    (data_in),
-        .send    (send),
-        .ready   (spi_ready)
+    spi_tx spi_tx (
+        .clk        (clk),
+        .rst        (rst),
+        .spi_clk    (spi_clk),
+        .spi_miso   (spi_data),
+        .parallel_tx(parallel_tx_spi)
     );
 
-    spi_rx #(
-        .DataWidth(DataWidth)
-    ) spi_rx_inst (
-        .clk     (clk),
-        .rst     (rst),
-        .spi_clk (spi_clk),
-        .spi_mosi(spi_data),
-        .data    (spi_data_out),
-        .valid   (spi_valid)
+    spi_rx spi_rx (
+        .clk        (clk),
+        .rst        (rst),
+        .spi_clk    (spi_clk),
+        .spi_mosi   (spi_data),
+        .parallel_rx(parallel_rx_spi)
     );
 
 endmodule

@@ -1,5 +1,6 @@
+`include "../interfaces/parallel_if.svh"
+
 module uart_tx #(
-    parameter int DataWidth,
     parameter int ClockRate,
     parameter int BaudRate
 ) (
@@ -8,10 +9,9 @@ module uart_tx #(
 
     output tx,
 
-    input  [DataWidth-1:0] data,
-    input                  send,
-    output                 ready
+    parallel_tx_if.tx parallel_tx
 );
+    localparam int DataWidth       = $bits(parallel_tx.data);
     localparam int CyclesPerBit    = ClockRate / BaudRate;
     localparam int CounterWidth    = $clog2(CyclesPerBit);
     localparam int BitCounterWidth = $clog2(DataWidth + 2);
@@ -22,8 +22,8 @@ module uart_tx #(
 
     reg writing;
 
-    assign ready = !writing || (bit_counter == '0 && counter == '0);
-    assign tx    = data_reg[0];
+    assign parallel_tx.ready = !writing || (bit_counter == '0 && counter == '0);
+    assign tx                = data_reg[0];
 
     always @(posedge clk) begin
         if (writing) begin
@@ -37,9 +37,9 @@ module uart_tx #(
                 end
             end
         end
-        if (send && ready) begin
+        if (parallel_tx.send && parallel_tx.ready) begin
             counter     <= CyclesPerBit - 1'd1;
-            data_reg    <= {1'b1, data, 1'b0};
+            data_reg    <= {1'b1, parallel_tx.data, 1'b0};
             writing     <= '1;
             bit_counter <= DataWidth + 1'd1;
         end

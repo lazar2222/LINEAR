@@ -1,5 +1,6 @@
+`include "../interfaces/parallel_if.svh"
+
 module uart_rx #(
-    parameter int DataWidth,
     parameter int ClockRate,
     parameter int BaudRate
 ) (
@@ -8,9 +9,9 @@ module uart_rx #(
 
     input rx,
 
-    output [DataWidth-1:0] data,
-    output                 valid
+    parallel_rx_if.rx parallel_rx
 );
+    localparam int DataWidth        = $bits(parallel_rx.data);
     localparam int CyclesPerBit     = ClockRate / BaudRate;
     localparam int HalfCyclesPerBit = CyclesPerBit / 2;
     localparam int CounterWidth     = $clog2(CyclesPerBit);
@@ -24,8 +25,8 @@ module uart_rx #(
 
     wire rx_edge = rx_d2 & !rx_d1;
 
-    assign data  = data_reg[DataWidth:1];
-    assign valid = valid_reg;
+    assign parallel_rx.data  = data_reg[DataWidth:1];
+    assign parallel_rx.valid = valid_reg;
 
     always @(posedge clk) begin
         rx_d2 <= rx_d1;

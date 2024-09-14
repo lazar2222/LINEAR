@@ -1,4 +1,4 @@
-`include "../bus/bus_if.svh"
+`include "../interfaces/bus_if.svh"
 
 module dummy_bus_slave #(
     parameter int BaseAddress,
