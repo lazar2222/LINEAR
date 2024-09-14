@@ -12,5 +12,21 @@ derive_clock_uncertainty
 set_false_path -from [get_clocks g_pll.system_pll|altera_pll|general[0].gpll~PLL_OUTPUT_COUNTER|divclk] -to [get_clocks g_pll.vga_pll|altera_pll|general[0].gpll~PLL_OUTPUT_COUNTER|divclk]
 
 set_false_path -from [get_ports {key*}] -to *
-set_false_path -from * -to [get_ports {vga_*}]
+set_false_path -from [get_ports {sw*} ] -to *
 set_false_path -from * -to [get_ports {led*}]
+set_false_path -from * -to [get_ports {vga_*}]
+
+set_false_path -from [get_ports {sim_rx} ] -to *
+set_false_path -from * -to [get_ports {sim_tx}]
+
+set_false_path -from [get_ports {cam_rx} ] -to *
+set_false_path -from * -to [get_ports {cam_tx}]
+set_false_path -from * -to [get_ports {cam_int}]
+
+set_false_path -from [get_ports {hab_clk} ] -to *
+set_false_path -from [get_ports {hab_mosi} ] -to *
+set_false_path -from * -to [get_ports {hab_miso}]
+
+set_false_path -from [get_ports {hab_reset} ] -to *
+set_false_path -from * -to [get_ports {hab_power}]
+set_false_path -from * -to [get_ports {hab_int}]
