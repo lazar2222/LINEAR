@@ -33,7 +33,7 @@ module parallel_to_bus #(
         .DataWidth   (DataWidth),
         .AddressWidth(AddressWidth),
         .FifoDepth   (FifoDepth)
-    ) parallel_to_fifo_inst (
+    ) parallel_to_fifo (
         .clk      (clk),
         .rst      (rst),
         .parallel (parallel),
@@ -47,7 +47,7 @@ module parallel_to_bus #(
 
     bus_to_fifo #(
         .SerialDataWidth(SerialDataWidth)
-    ) bus_to_fifo_inst (
+    ) bus_to_fifo (
         .clk      (clk),
         .rst      (rst),
         .bus      (bus),
