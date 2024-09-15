@@ -12,12 +12,9 @@ module uart_xcvr #(
 
     parallel_xcvr_if.xcvr parallel_xcvr
 );
-    localparam int DataWidth = $bits(parallel_xcvr.data_rx);
-
-    `PARALLEL_IF__XCVR_BREAKDOWN(parallel_xcvr, parallel_xcvr_tx, parallel_xcvr_rx);
+    `PARALLEL_IF__XCVR_BREAKDOWN(parallel_xcvr, parallel_xcvr_tx, parallel_xcvr_rx)
 
     uart_tx #(
-        .DataWidth(DataWidth),
         .ClockRate(ClockRate),
         .BaudRate (BaudRate)
     ) uart_tx (
@@ -28,7 +25,6 @@ module uart_xcvr #(
     );
 
     uart_rx #(
-        .DataWidth(DataWidth),
         .ClockRate(ClockRate),
         .BaudRate (BaudRate)
     ) uart_rx (

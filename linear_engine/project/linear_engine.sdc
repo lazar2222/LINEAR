@@ -23,9 +23,9 @@ set_false_path -from [get_ports {cam_rx} ] -to *
 set_false_path -from * -to [get_ports {cam_tx}]
 set_false_path -from * -to [get_ports {cam_int}]
 
-set_false_path -from [get_ports {hab_clk} ] -to *
-set_false_path -from [get_ports {hab_mosi} ] -to *
-set_false_path -from * -to [get_ports {hab_miso}]
+set_false_path -from [get_ports {hab_clk*} ] -to *
+set_false_path -from [get_ports {hab_mosi*} ] -to *
+set_false_path -from * -to [get_ports {hab_miso*}]
 
 set_false_path -from [get_ports {hab_reset} ] -to *
 set_false_path -from * -to [get_ports {hab_power}]

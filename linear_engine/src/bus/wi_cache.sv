@@ -9,10 +9,10 @@ module  wi_cache (
 );
     localparam int MasterDataWidth    = $bits(master.data_ctp);
     localparam int MasterAddressWidth = $bits(master.address);
-    localparam int SlaveDataWidth     = $bits(slave.data);
-    localparam int SlaveAddressWidth  = $bits(slave.tag);
+    localparam int SlaveDataWidth     = $bits(slave.data_ctp);
+    localparam int SlaveAddressWidth  = $bits(slave.address);
     localparam int BufferAddressWidth = SlaveAddressWidth - MasterAddressWidth;
-    localparam int SlaveBytesPerWord    = $bits(slaves[0].byte_enable);
+    localparam int SlaveBytesPerWord  = $bits(slave.byte_enable);
 
     reg                          read_hit;
     reg                          read_miss;
@@ -28,13 +28,13 @@ module  wi_cache (
 
     wire hit = valid && (tag == master_address) && slave.read;
 
-    assign master.data_ctp    = slave.data        << (buffer_address * SlaveBytesPerWord);
+    assign master.data_ctp    = slave.data_ctp    << (buffer_address * SlaveDataWidth);
     assign master.address     = master_address;
     assign master.byte_enable = slave.byte_enable << (buffer_address * SlaveBytesPerWord);
     assign master.read        = slave.read && !hit;
     assign master.write       = slave.write;
 
-    assign slave.data_ptc    = (read_hit ? data : master.data_ptc) >> (read_address * SlaveBytesPerWord);
+    assign slave.data_ptc    = (read_hit ? data : master.data_ptc) >> (read_address * SlaveDataWidth);
     assign slave.hit_address = '0;
     assign slave.hit_mask    = '0;
     assign slave.hit         = hit || master.hit;

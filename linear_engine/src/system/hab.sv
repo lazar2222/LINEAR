@@ -16,13 +16,14 @@ module hab #(
     input  [NSPIInstances-1:0] nspi_mosi,
     output [NSPIInstances-1:0] nspi_miso
 );
-    localparam int AddressWidth = $bits(bus.address);
-    localparam int DataWidth    = $bits(bus.data_ctp);
-    localparam int BytesPerWord = $bits(bus.byte_enable);
-    localparam int ByteSize     = DataWidth / BytesPerWord;
+    localparam int AddressWidth     = $bits(bus.address);
+    localparam int DataWidth        = $bits(bus.data_ctp);
+    localparam int BytesPerWord     = $bits(bus.byte_enable);
+    localparam int ByteAddressWidth = AddressWidth + $clog2(BytesPerWord);
+    localparam int ByteSize         = DataWidth / BytesPerWord;
 
-    `BUS_IF__CREATE_BUS(bus_narrow, BusWidth, AddressWidth, ByteSize);
-    parallel_xcvr_if #(ParallelWidth) xcvr_if ();
+    `BUS_IF__CREATE_BUS(bus_narrow, BusWidth, ByteAddressWidth, ByteSize)
+    parallel_xcvr_if #(.DataWidth(ParallelWidth)) xcvr_if ();
 
     wi_cache hab_cache (
         .clk   (clk),

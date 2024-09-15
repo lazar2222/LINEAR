@@ -11,26 +11,17 @@ module nspi_tx #(
 
     parallel_tx_if.tx parallel_tx
 );
-    localparam int DataWidth     = $bits(parallel_tx.data);
-    localparam int InstanceWidth = DataWidth / InstanceCount;
-
-    wire [InstanceCount-1:0] readys;
-
-    assign parallel_tx.ready = &readys;
+    `PARALLEL_IF__SPLIT_TX(parallel_tx, InstanceCount)
 
     genvar i;
     generate
         for (i = 0; i < InstanceCount; i++) begin : g_nspi_tx_instance
-            spi_tx #(
-                .DataWidth(InstanceWidth)
-            ) spi_tx (
-                .clk     (clk),
-                .rst     (rst),
-                .spi_clk (spi_clk),
-                .spi_miso(spi_miso[i]),
-                .data    (parallel_tx.data[InstanceWidth*i+:InstanceWidth]),
-                .send    (parallel_tx.send),
-                .ready   (readys[i])
+            spi_tx spi_tx (
+                .clk        (clk),
+                .rst        (rst),
+                .spi_clk    (spi_clk),
+                .spi_miso   (spi_miso[i]),
+                .parallel_tx(parallel_tx_div[i])
             );
         end
     endgenerate

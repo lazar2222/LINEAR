@@ -7,6 +7,16 @@ set_global_assignment -name NUM_PARALLEL_PROCESSORS 28
 set_global_assignment -name SMART_RECOMPILE ON
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"
+set_global_assignment -name OPTIMIZATION_TECHNIQUE SPEED
+set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_DUPLICATION ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_RETIMING ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_EFFORT EXTRA
+set_global_assignment -name ROUTER_LCELL_INSERTION_AND_LOGIC_DUPLICATION ON
+set_global_assignment -name ROUTER_TIMING_OPTIMIZATION_LEVEL MAXIMUM
+set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
+set_global_assignment -name ADV_NETLIST_OPT_SYNTH_WYSIWYG_REMAP ON
+set_global_assignment -name MUX_RESTRUCTURE OFF
 set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
 set_global_assignment -name TIMING_ANALYZER_DO_REPORT_TIMING ON
 set_global_assignment -name ENABLE_DRC_SETTINGS ON
@@ -186,6 +196,29 @@ set_location_assignment PIN_AB12 -to hab_int
 
 set_global_assignment -name SEARCH_PATH ../src/components
 set_global_assignment -name SDC_FILE linear_engine.SDC
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/system/top.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/system/hab.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/memory/mem_bank.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/bus_arbiter.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/bus_coalesce.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/bus_connector.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/bus_filter.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/bus_matrix.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/bus_terminator.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/bus_to_fifo.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/parallel_to_bus.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/wi_cache.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/uart_rx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/uart_tx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/uart_xcvr.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/spi_rx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/spi_tx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/nspi_rx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/nspi_tx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/nspi_xcvr.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/variable_fifo.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/parallel_to_fifo.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/components/tree_conflict_detector.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/camera/pattern_gen.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/camera/sync_gen.sv
 

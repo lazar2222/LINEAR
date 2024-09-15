@@ -30,7 +30,7 @@ interface fifo_read_if #(
     wire                 read;
 
     modport fifo (
-        output  data,
+        output data,
         output can_read,
         input  read
     );
@@ -44,17 +44,16 @@ interface fifo_read_if #(
 endinterface
 
 `define FIFO_IF__MAKE_FIFO(name, ww, rw, d, f) \
-    fifo_read_if  #(ww) ``name``_write (); \
-    fifo_write_if #(rw) ``name``_read ();  \
-    variable_fifo # (                      \
-        .Depth(d),                         \
-        .Fast (f)                          \
-    )                                      \
-    name (                                 \
-        .clk(clk),                         \
-        .rst(rst),                         \
-        .write_port(``name``_write),       \
-        .read_port(``name``_read)          \
-    );                                     \
+    fifo_write_if #(.DataWidth(ww)) ``name``_write (); \
+    fifo_read_if  #(.DataWidth(rw)) ``name``_read ();  \
+    variable_fifo # (                                  \
+        .Depth(d),                                     \
+        .Fast (f)                                      \
+    ) name (                                           \
+        .clk       (clk),                              \
+        .rst       (rst),                              \
+        .write_port(``name``_write),                   \
+        .read_port (``name``_read)                     \
+    );                                                 \
 
 `endif //FIFO_IF__SVH

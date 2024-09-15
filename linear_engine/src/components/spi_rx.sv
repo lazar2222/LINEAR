@@ -31,7 +31,7 @@ module spi_rx (
         spi_mosi_d1 <= spi_mosi;
         if (spi_clk_edge) begin
             counter  <= counter + 1'd1;
-            data_reg <= {data_reg[DataWidth-2:0], spi_mosi};
+            data_reg <= {data_reg[DataWidth-2:0], spi_mosi_d2};
             if (counter == DataWidth - 1'd1) begin
                 valid_reg <= '1;
                 counter   <= '0;

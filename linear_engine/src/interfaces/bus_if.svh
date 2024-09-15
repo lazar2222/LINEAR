@@ -9,18 +9,18 @@
     ) name ();                  \
 
 `define BUS_IF__CREATE_MEM_BANK(name, dw, baw, bs, ba, sb, init) \
-    `BUS_IF__CREATE_BUS(``name``_a, dw, baw, bs); \
-    `BUS_IF__CREATE_BUS(``name``_b, dw, baw, bs); \
-    mem_bank #(                                   \
-        .BaseAddress(ba),                         \
-        .SizeBytes  (sb),                         \
-        .InitFile   (init)                          \
-    ) name (                                      \
-        .clk   (clk),                             \
-        .rst   (rst),                             \
-        .port_a(``name``_a),                      \
-        .port_b(``name``_b)                       \
-    );                                            \
+    `BUS_IF__CREATE_BUS(``name``_a, dw, baw, bs) \
+    `BUS_IF__CREATE_BUS(``name``_b, dw, baw, bs) \
+    mem_bank #(                                  \
+        .BaseAddress(ba),                        \
+        .SizeBytes  (sb),                        \
+        .InitFile   (init)                       \
+    ) name (                                     \
+        .clk   (clk),                            \
+        .rst   (rst),                            \
+        .port_a(``name``_a),                     \
+        .port_b(``name``_b)                      \
+    );                                           \
 
 interface bus_if #(
     parameter int DataWidth,

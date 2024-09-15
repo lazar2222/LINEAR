@@ -25,8 +25,8 @@ module variable_fifo #(
     wire can_read_slow  = (count              >= ReadWidth);
     wire can_read_fast  = (count + WriteWidth >= ReadWidth) && write_port.write;
 
-    wire data_out_fast = WriteWidth >= ReadWidth ? write_port.data[ReadWidth-1:0] : {write_port.data, data[read_ptr+:ReadWidth-WriteWidth]};
-    wire data_out_slow = data[read_ptr+:ReadWidth];
+    wire [ReadWidth-1:0] data_out_fast = WriteWidth >= ReadWidth ? write_port.data[ReadWidth-1:0] : {write_port.data, data[read_ptr+:ReadWidth-WriteWidth]};
+    wire [ReadWidth-1:0] data_out_slow = data[read_ptr+:ReadWidth];
 
     assign write_port.can_write = can_write_slow || (Fast && can_write_fast);
     assign read_port.can_read   = can_read_slow  || (Fast && can_read_fast);
@@ -34,7 +34,7 @@ module variable_fifo #(
     assign read_port.data = Fast && can_read_fast && !can_read_slow ? data_out_fast : data_out_slow;
 
     always @(posedge clk) begin
-        if (write_port.write && write_port.read && write_port.can_write && read_port.can_read) begin
+        if (write_port.write && read_port.read && write_port.can_write && read_port.can_read) begin
             data[write_ptr+:WriteWidth] <= write_port.data;
             write_ptr                   <= write_ptr + WriteWidth;
             read_ptr                    <= read_ptr  + ReadWidth;

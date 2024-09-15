@@ -12,6 +12,7 @@ module bus_coalesce #(
     localparam int SlaveSelectWidth     = $clog2(SlavePorts);
     localparam int MasterBytesPerWord   = $bits(master.byte_enable);
     localparam int MasterDataWidth      = $bits(master.data_ctp);
+    localparam int SlaveDataWidth       = $bits(slaves[0].data_ctp);
     localparam int SlaveBytesPerWord    = $bits(slaves[0].byte_enable);
     localparam int ByteSize             = MasterDataWidth / MasterBytesPerWord;
 
@@ -64,10 +65,10 @@ module bus_coalesce #(
             for (j = 0; j < MasterBytesPerWord; j++) begin : g_mask
                 assign data_mask[i][ByteSize*j+:ByteSize] = {ByteSize{byte_enable[i][j]}};
             end
-            assign data[i] = slaves[i].data_ctp << (coalesce_address[i] * SlaveBytesPerWord) & data_mask[i];
+            assign data[i] = slaves[i].data_ctp << (coalesce_address[i] * SlaveDataWidth) & data_mask[i];
 
             assign compatible[i]         = (master_address[i] == master_address[slave_select]) && (read[i] == read[slave_select]) && (write[i] == read[slave_select]);
-            assign slaves[i].data_ptc    = master.data_ptc >> (coalesce_address[i] * SlaveBytesPerWord);
+            assign slaves[i].data_ptc    = master.data_ptc >> (coalesce_address[i] * SlaveDataWidth);
             assign slaves[i].hit_address = '0;
             assign slaves[i].hit_mask    = '0;
             assign slaves[i].hit         = compatible[i] ? master.hit : '1;

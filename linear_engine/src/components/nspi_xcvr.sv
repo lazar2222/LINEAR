@@ -12,12 +12,9 @@ module nspi_xcvr #(
 
     parallel_xcvr_if.xcvr parallel_xcvr
 );
-    localparam int DataWidth = $bits(parallel_xcvr.data_rx);
-
-    `PARALLEL_IF__XCVR_BREAKDOWN(parallel_xcvr, parallel_xcvr_tx, parallel_xcvr_rx);
+    `PARALLEL_IF__XCVR_BREAKDOWN(parallel_xcvr, parallel_xcvr_tx, parallel_xcvr_rx)
 
     nspi_tx #(
-        .DataWidth    (DataWidth),
         .InstanceCount(InstanceCount)
     ) nspi_tx (
         .clk        (clk),
@@ -28,12 +25,12 @@ module nspi_xcvr #(
     );
 
     nspi_rx #(
-        .DataWidth    (DataWidth),
         .InstanceCount(InstanceCount)
     ) nspi_rx (
         .clk        (clk),
         .rst        (rst),
         .spi_clk    (spi_clk),
+        .spi_mosi   (spi_mosi),
         .parallel_rx(parallel_xcvr_rx)
     );
 

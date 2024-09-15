@@ -24,10 +24,10 @@ module testbench_xcvr ();
     wire uart_data;
     wire spi_data;
 
-    parallel_tx_if #(DataWidth) parallel_tx_uart();
-    parallel_rx_if #(DataWidth) parallel_rx_uart();
-    parallel_tx_if #(DataWidth) parallel_tx_spi();
-    parallel_rx_if #(DataWidth) parallel_rx_spi();
+    parallel_tx_if #(.DataWidth(DataWidth)) parallel_tx_uart ();
+    parallel_rx_if #(.DataWidth(DataWidth)) parallel_rx_uart ();
+    parallel_tx_if #(.DataWidth(DataWidth)) parallel_tx_spi ();
+    parallel_rx_if #(.DataWidth(DataWidth)) parallel_rx_spi ();
 
     uart_tx #(
         .ClockRate(ClockRate),
