@@ -9,7 +9,7 @@
 `define SYSTEM__VGA_FREQ        "25.175 MHz"
 `define SYSTEM__VGA_FRACTIONAL  "true"
 
-`define SYSTEM__POR_TIME 144_000_000
+`define SYSTEM__POR_TIME 1
 
 // VGA parameters
 

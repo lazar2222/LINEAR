@@ -41,7 +41,7 @@ module parallel_to_fifo #(
     assign parallel.send    = data_in.can_read && parallel.ready;
     assign data_in.read     = data_in.can_read && parallel.ready;
 
-    assign operation.data = op;
+    assign operation.data = section_counter == '0 ? parallel.data_rx[SerialDataWidth-1] : op;
     assign address.data   = parallel.data_rx;
     assign data_out.data  = parallel.data_rx;
 
@@ -62,7 +62,7 @@ module parallel_to_fifo #(
             if (section_counter == '0) begin
                 op <= parallel.data_rx[SerialDataWidth-1];
             end
-            if (section_counter == AddressPartSections - 1'd1 && !op) begin
+            if (section_counter == AddressPartSections - 1'd1 && !operation.data) begin
                 section_counter <= '0;
                 fifo_counter    <= fifo_counter + 1'd1;
             end
