@@ -1,0 +1,12 @@
+__pycache__/
+sim_build/
+
+linear_engine/synthesis/db/
+linear_engine/synthesis/incremental_db/
+linear_engine/synthesis/output_files/*
+*.ver
+*.qws
+c5_pin_model_dump.txt
+
+!linear_engine/synthesis/output_files/*.sof
+!linear_engine/synthesis/output_files/*.cdf
