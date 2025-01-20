@@ -40,7 +40,7 @@ class NSpiTx:
 
         for i in range(instance_count):
             self.tx.append(SpiTx(clk, dout[i], data_width // instance_count))
-    
+
     def transmit(self, value):
         for tx in self.tx:
             tx.transmit(value & (2 ** tx.data_width - 1))
@@ -106,11 +106,11 @@ class NSpiRx:
         return value
 
     async def wait_available(self):
-        await self.rx[0].wait_available() 
+        await self.rx[0].wait_available()
 
 class NSpiSlave:
     def __init__(self, clk, mosi, miso, data_width = 8, instance_count = 1):
-        
+
         self.rx = NSpiRx(clk, mosi, data_width, instance_count)
         self.tx = NSpiTx(clk, miso, data_width, instance_count)
 
@@ -145,6 +145,7 @@ class NSpiMaster:
         self.division_factor = division_factor
         self.clk = clk
         self.data_width = data_width // instance_count
+        self.dw = data_width
 
         self.slave = NSpiSlave(clk, miso, mosi, data_width, instance_count)
 

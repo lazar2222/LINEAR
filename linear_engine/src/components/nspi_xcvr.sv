@@ -11,7 +11,9 @@ module nspi_xcvr #(
     input  [INSTANCE_COUNT-1:0] spi_mosi,
     output [INSTANCE_COUNT-1:0] spi_miso,
 
-    `PARALLEL_IF__BI_PORTS(parallel)
+    `PARALLEL_IF__BI_PORTS(parallel),
+
+    output overflow
 );
     nspi_tx #(
         .INSTANCE_COUNT              (INSTANCE_COUNT),
@@ -32,7 +34,8 @@ module nspi_xcvr #(
         .rst                     (rst),
         .spi_clk                 (spi_clk),
         .spi_mosi                (spi_mosi),
-        `PARALLEL_IF__UNI_CONNECT(parallel_tx, parallel_tx)
+        `PARALLEL_IF__UNI_CONNECT(parallel_tx, parallel_tx),
+        .overflow                (overflow)
     );
 
 endmodule

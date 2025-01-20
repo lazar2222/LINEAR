@@ -12,7 +12,7 @@ module nspi_tx #(
 
     `PARALLEL_IF__UNI_RX_PORTS(parallel_rx)
 );
-    `PARALLEL_IF__SPLIT_RX(parallel_rx, INSTANCE_COUNT)
+    `PARALLEL_IF__SPLIT_RX(parallel_rx, INSTANCE_COUNT);
 
     genvar i;
     generate

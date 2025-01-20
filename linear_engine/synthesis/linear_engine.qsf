@@ -184,6 +184,7 @@ set_location_assignment PIN_AB12 -to hab_int[2]
 set_global_assignment -name SDC_FILE linear_engine.SDC
 set_global_assignment -name SEARCH_PATH modules
 set_global_assignment -name SEARCH_PATH ../src/components
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/bus/parallel_to_bus.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/memory/mem_bank.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/memory/periph_mem_interface.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/system/top.sv

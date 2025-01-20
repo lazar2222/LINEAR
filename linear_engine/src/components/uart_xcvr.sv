@@ -11,7 +11,10 @@ module uart_xcvr #(
     input  rx,
     output tx,
 
-    `PARALLEL_IF__BI_PORTS(parallel)
+    `PARALLEL_IF__BI_PORTS(parallel),
+
+    output overflow,
+    output frame_error
 );
     uart_tx #(
         .CLOCK_RATE                  (CLOCK_RATE),
@@ -32,7 +35,9 @@ module uart_xcvr #(
         .clk                     (clk),
         .rst                     (rst),
         .rx                      (rx),
-        `PARALLEL_IF__UNI_CONNECT(parallel_tx, parallel_tx)
+        `PARALLEL_IF__UNI_CONNECT(parallel_tx, parallel_tx),
+        .overflow                (overflow),
+        .frame_error             (frame_error)
     );
 
 endmodule

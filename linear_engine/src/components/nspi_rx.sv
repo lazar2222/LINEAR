@@ -10,9 +10,15 @@ module nspi_rx #(
     input                      spi_clk,
     input [INSTANCE_COUNT-1:0] spi_mosi,
 
-    `PARALLEL_IF__UNI_TX_PORTS(parallel_tx)
+    `PARALLEL_IF__UNI_TX_PORTS(parallel_tx),
+
+    output overflow
 );
-    `PARALLEL_IF__SPLIT_TX(parallel_tx, INSTANCE_COUNT)
+    `PARALLEL_IF__SPLIT_TX(parallel_tx, INSTANCE_COUNT);
+
+    wire [INSTANCE_COUNT-1:0] overflows;
+
+    assign overflow = |overflows;
 
     genvar i;
     generate
@@ -24,7 +30,8 @@ module nspi_rx #(
                 .rst                           (rst),
                 .spi_clk                       (spi_clk),
                 .spi_mosi                      (spi_mosi[i]),
-                `PARALLEL_IF__UNI_CONNECT_SPLIT(parallel_tx, parallel_tx_div, i)
+                `PARALLEL_IF__UNI_CONNECT_SPLIT(parallel_tx, parallel_tx_div, i),
+                .overflow                      (overflows[i])
             );
         end
     endgenerate

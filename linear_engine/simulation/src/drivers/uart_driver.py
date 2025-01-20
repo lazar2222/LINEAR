@@ -10,7 +10,7 @@ class UartTx:
         self.tx = tx
         self.division_factor = clock_rate // baud_rate
         self.data_width = data_width + 2
-        
+
         self.driver_queue = EventQueue(Queue())
 
         cocotb.start_soon(self.driver())
@@ -80,6 +80,7 @@ class UartTransceiver:
     def __init__(self, clk, tx, rx, clock_rate, baud_rate, data_width=8):
         self.tx = UartTx(clk, tx, clock_rate, baud_rate, data_width)
         self.rx = UartRx(clk, rx, clock_rate, baud_rate, data_width)
+        self.dw = data_width
 
     def transmit(self, data):
         self.tx.transmit(data)

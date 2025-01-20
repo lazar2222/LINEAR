@@ -4,7 +4,7 @@ from cocotb.clock import Clock
 
 def init_inputs(dut):
     dut.clock_50.value  = 1
-    
+
     dut.key.value       = 0xF
     dut.sw.value        = 0
 

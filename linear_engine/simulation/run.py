@@ -16,7 +16,7 @@ def run(gui, convert, wave):
     testbench = "testbench"
 
     os.environ["COCOTB_RESOLVE_X"] = "ZEROS"
-    
+
     runner = get_runner(sim)
     runner.build(sources=get_sources(), parameters={"PLL": 0}, hdl_toplevel=top, waves=True, log_file="sim_build\\build.log")
     runner.test(test_module=testbench, hdl_toplevel=top, test_args= ["-L", "altera_mf"], waves=True, gui=gui, log_file="sim_build\\test.log")

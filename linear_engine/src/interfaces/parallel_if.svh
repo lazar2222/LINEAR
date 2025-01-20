@@ -34,8 +34,8 @@
     .``mod``_ready(``bus``_ready[i])  \
 
 `define PARALLEL_IF__BI(name, data_width) \
-    `PARALLEL_IF__UNI(``name``_tx, data_width) \
-    `PARALLEL_IF__UNI(``name``_rx, data_width) \
+    `PARALLEL_IF__UNI(``name``_tx, data_width); \
+    `PARALLEL_IF__UNI(``name``_rx, data_width); \
 
 `define PARALLEL_IF__BI_PARAMS(name) \
     `PARALLEL_IF__UNI_PARAMS(``name``_tx), \
@@ -49,6 +49,10 @@
     `PARALLEL_IF__UNI_FILL_PARAMS(``mod``_tx, ``bus``_tx), \
     `PARALLEL_IF__UNI_FILL_PARAMS(``mod``_rx, ``bus``_rx)  \
 
+`define PARALLEL_IF__BI_FILL_PARAMS_INVERTED(mod, bus) \
+    `PARALLEL_IF__UNI_FILL_PARAMS(``mod``_tx, ``bus``_rx), \
+    `PARALLEL_IF__UNI_FILL_PARAMS(``mod``_rx, ``bus``_tx)  \
+
 `define PARALLEL_IF__BI_CONNECT(mod, bus) \
     `PARALLEL_IF__UNI_CONNECT(``mod``_tx, ``bus``_tx), \
     `PARALLEL_IF__UNI_CONNECT(``mod``_rx, ``bus``_rx)  \
@@ -59,9 +63,9 @@
 
 `define PARALLEL_IF__SPLIT_TX(name, divf) \
     localparam int DATA_WIDTH_``name``_div = DATA_WIDTH_``name`` / divf;                                                                   \
-    wire [DATA_WIDTH_``name``_div-1:0] ``name``_div_data[divf];                                                                            \
-    wire [                   divf-1:0] ``name``_div_valid;                                                                                 \
-    wire [                   divf-1:0] ``name``_div_ready;                                                                                 \
+    wire [divf-1:0][DATA_WIDTH_``name``_div-1:0] ``name``_div_data;                                                                        \
+    wire [divf-1:0]                              ``name``_div_valid;                                                                       \
+    wire [divf-1:0]                              ``name``_div_ready;                                                                       \
     genvar ``name``_div_i;                                                                                                                 \
     generate                                                                                                                               \
         for (``name``_div_i = 0; ``name``_div_i < divf; ``name``_div_i++) begin : g_``name``_gen                                           \
@@ -73,9 +77,9 @@
 
 `define PARALLEL_IF__SPLIT_RX(name, divf) \
     localparam int DATA_WIDTH_``name``_div = DATA_WIDTH_``name`` / divf;                                                                    \
-    wire [DATA_WIDTH_``name``_div-1:0] ``name``_div_data[divf];                                                                             \
-    wire [                   divf-1:0] ``name``_div_valid;                                                                                  \
-    wire [                   divf-1:0] ``name``_div_ready;                                                                                  \
+    wire [divf-1:0][DATA_WIDTH_``name``_div-1:0] ``name``_div_data;                                                                         \
+    wire [divf-1:0]                              ``name``_div_valid;                                                                        \
+    wire [divf-1:0]                              ``name``_div_ready;                                                                        \
     genvar ``name``_div_i;                                                                                                                  \
     generate                                                                                                                                \
         for (``name``_div_i = 0; ``name``_div_i < divf; ``name``_div_i++) begin : g_``name``_gen                                            \

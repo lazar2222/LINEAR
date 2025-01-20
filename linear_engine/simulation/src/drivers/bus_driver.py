@@ -31,7 +31,7 @@ class BusMaster:
         self.verif_monitor_queue  = EventQueue(Queue())
         self.result_monitor_queue = EventQueue(Queue())
         self.operation_queue      = EventQueue(Queue())
-        self.result_queue         = EventQueue(Queue()) 
+        self.result_queue         = EventQueue(Queue())
 
         cocotb.start_soon(self.driver())
         cocotb.start_soon(self.monitor())
@@ -68,7 +68,7 @@ class BusMaster:
         self.set(0, address // self.WORD_SIZE, 0, 1, 0)
         assert self.verif_monitor_queue.qsize() == 0
         self.verif_monitor_queue.put_nowait((size, offset))
-        
+
     def drive_write(self, address, data, size = None):
         offset = address % self.WORD_SIZE
         self.set(data << (offset * self.BYTE_WIDTH), address // self.WORD_SIZE, (2 ** size - 1) << offset, 0, 1)
@@ -244,7 +244,7 @@ class BusMaster:
         if status != "complete":
             return status
         return await self.get_result()
-    
+
     async def transaction_with_result(self, operation, address, data = None, size = None):
         await self.flush(True)
         status = await self.transaction_with_status(operation, address, data, size, True)
@@ -323,7 +323,7 @@ class BusSlave:
         res["complete"]    = self.complete.value.integer
         res["error"]       = self.error.value.integer
         return res
-    
+
     def drive_hit(self, address, mask):
         self.set(None, address, mask, None, None, None)
 

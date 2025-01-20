@@ -25,14 +25,14 @@ module periph_mem_interface #(
     localparam int DEVICE_ADDRESS_WIDTH     = WORD_ADDRESS_WIDTH - LOCAL_ADDRESS_WIDTH;
     localparam int DEVICE_ADDRESS           = BASE_ADDRESS[BYTE_ADDRESS_WIDTH-1:LOCAL_BYTE_ADDRESS_WIDTH];
 
-    wire [DEVICE_ADDRESS_WIDTH-1:0] device_address = port_address[WORD_ADDRESS_WIDTH-1:LOCAL_ADDRESS_WIDTH];
-    wire [ LOCAL_ADDRESS_WIDTH-1:0] local_address  = port_address[LOCAL_ADDRESS_WIDTH-1:0];
-    wire [           WORD_SIZE-1:0] byte_enable    = port_byte_enable;
-    wire [          DATA_WIDTH-1:0] data_in        = port_data_ctp;
-    wire [          DATA_WIDTH-1:0] data_mask;
-    reg  [          DATA_WIDTH-1:0] data_out;
-    wire [          DATA_WIDTH-1:0] data_periph [SIZE_WORDS];
-    
+    wire [DEVICE_ADDRESS_WIDTH-1:0]                 device_address = port_address[WORD_ADDRESS_WIDTH-1:LOCAL_ADDRESS_WIDTH];
+    wire [ LOCAL_ADDRESS_WIDTH-1:0]                 local_address  = port_address[LOCAL_ADDRESS_WIDTH-1:0];
+    wire [           WORD_SIZE-1:0]                 byte_enable    = port_byte_enable;
+    wire [          DATA_WIDTH-1:0]                 data_in        = port_data_ctp;
+    wire [          DATA_WIDTH-1:0]                 data_mask;
+    reg  [          DATA_WIDTH-1:0]                 data_out;
+    wire [          SIZE_WORDS-1:0][DATA_WIDTH-1:0] data_periph;
+
     wire hit       = device_address == DEVICE_ADDRESS;
     wire read_hit  = hit && port_read;
     wire write_hit = hit && port_write;
