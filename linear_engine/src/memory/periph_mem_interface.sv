@@ -42,9 +42,9 @@ module periph_mem_interface #(
     assign port_data_ptc    = read_hit_reg ? data_out : 'z;
     assign port_hit_address = {DEVICE_ADDRESS, {LOCAL_ADDRESS_WIDTH{1'b0}}};
     assign port_hit_mask    = {{DEVICE_ADDRESS_WIDTH{1'b1}}, {LOCAL_ADDRESS_WIDTH{1'b0}}};
-    assign port_hit         = hit ? '1 : 'z;
+    assign port_hit         = hit ? '1                      : 'z;
     assign port_complete    = hit ? (read_hit || write_hit) : 'z;
-    assign port_error       = hit ? '0 : 'z;
+    assign port_error       = hit ? '0                      : 'z;
     assign data_periph_out  = (data_in & data_mask) | (data_periph[local_address] & ~data_mask);
 
     always @(posedge clk) begin

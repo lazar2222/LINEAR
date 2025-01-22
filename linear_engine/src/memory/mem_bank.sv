@@ -50,10 +50,10 @@ module mem_bank #(
     assign port_b_hit_address = {DEVICE_ADDRESS, {LOCAL_ADDRESS_WIDTH{1'b0}}};
     assign port_a_hit_mask    = {{DEVICE_ADDRESS_WIDTH{1'b1}}, {LOCAL_ADDRESS_WIDTH{1'b0}}};
     assign port_b_hit_mask    = {{DEVICE_ADDRESS_WIDTH{1'b1}}, {LOCAL_ADDRESS_WIDTH{1'b0}}};
-    assign port_a_hit         = hit_a ? '1 : 'z;
-    assign port_b_hit         = hit_b ? '1 : 'z;
-    assign port_a_complete    = hit_a ? (read_hit_a || write_hit_a) : 'z;
-    assign port_b_complete    = hit_b ? (read_hit_b || write_hit_b) : 'z;
+    assign port_a_hit         = hit_a ? '1                                                                   : 'z;
+    assign port_b_hit         = hit_b ? '1                                                                   : 'z;
+    assign port_a_complete    = hit_a ? (read_hit_a || write_hit_a)                                          : 'z;
+    assign port_b_complete    = hit_b ? (read_hit_b || write_hit_b)                                          : 'z;
     assign port_a_error       = hit_a ? (write_hit_a && write_hit_b && (local_address_a == local_address_b)) : 'z;
     assign port_b_error       = hit_b ? (write_hit_a && write_hit_b && (local_address_a == local_address_b)) : 'z;
 
