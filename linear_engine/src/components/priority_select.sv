@@ -18,13 +18,6 @@ module priority_mask #(
         .any(prio_any)
     );
 
-    mask #(
-        .WIDTH(WIDTH),
-        .COUNT(COUNT)
-    ) mask (
-        .values(values),
-        .enable(prio_enable),
-        .masked(masked)
-    );
+    assign masked = prio_any ? values[prio_sel] : '0;
 
 endmodule

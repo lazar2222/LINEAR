@@ -71,10 +71,10 @@ module vga_producer #(
             waiting <= '0;
             counter <= counter + 1'd1;
             x       <= x + (WORDS_PER_READ * pixels_per_word);
-            if (x + (WORDS_PER_READ  * pixels_per_word) == SCREEN_WIDTH) begin
+            if (x == SCREEN_WIDTH - (WORDS_PER_READ  * pixels_per_word)) begin
                 x <= '0;
                 y <= y + 1'd1;
-                if (y + 1'd1 == SCREEN_HEIGHT) begin
+                if (y == SCREEN_HEIGHT - 1'd1) begin
                     y       <= '0;
                     reading <= '0;
                 end

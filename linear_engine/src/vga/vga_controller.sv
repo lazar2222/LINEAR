@@ -71,8 +71,6 @@ module vga_controller #(
     `PARALLEL_IF__UNI(fifo_write, DATA_WIDTH_master)
     `PARALLEL_IF__UNI(fifo_read,  LOCAL_WORD_WIDTH)
 
-    wire [BYTE_ADDRESS_WIDTH_master-1:0] base_address;
-
     reg  [BYTE_ADDRESS_WIDTH_master-1:0] base_address_1;
     reg  [BYTE_ADDRESS_WIDTH_master-1:0] base_address_2;
     reg                                  enable;
@@ -86,29 +84,31 @@ module vga_controller #(
     wire [  DATA_WIDTH_config_port-1:0] memory_data;
     wire [                         1:0] memory_write;
 
-    assign base_address = (!double_buffered || !buffer_flag) ? base_address_1 : base_address_2;
-    
+    wire [BYTE_ADDRESS_WIDTH_master-1:0] base_address = (!double_buffered || !buffer_flag) ? base_address_1 : base_address_2;
+
     wire [HORIZONTAL_BITS-1:0] x;
     wire [  VERTICAL_BITS-1:0] y;
     wire                       visible_area;
     wire                       start_fill;
 
-    wire underflow_ns;
-
-    wire strobe;
     reg start_fill_reg;
 
-    assign vga_clock   = vga_clk;
-    assign vga_sync_n  = '0;
-    assign vga_blank_n = visible_area;
+    wire strobe;
+    wire underflow_ns;
 
-    `VGA_CONTROLLER_SYNC(enable);
+    wire vga_rst_n = !rst && enable;
+
+    `VGA_CONTROLLER_SYNC(vga_rst_n);
     `VGA_CONTROLLER_SYNC(mono);
     `VGA_CONTROLLER_SYNC(pixel_width_select);
     `VGA_CONTROLLER_SYNC_INVERSE(start_fill);
     `VGA_CONTROLLER_SYNC_INVERSE(underflow_ns);
 
     assign strobe = start_fill_sync && !start_fill_reg;
+
+    assign vga_clock   = vga_clk;
+    assign vga_sync_n  = '0;
+    assign vga_blank_n = visible_area;
 
     assign underflow = underflow_ns_sync;
 
@@ -164,7 +164,7 @@ module vga_controller #(
         .VERTICAL_BACK_PORCH    (VERTICAL_BACK_PORCH)
     ) sync_gen (
         .clk         (vga_clk),
-        .rst         (rst || !enable_sync),
+        .rst         (!vga_rst_n_sync),
         .x           (x),
         .y           (y),
         .h_sync      (vga_hs),
@@ -181,7 +181,7 @@ module vga_controller #(
         `BUS_IF__FILL_PARAMS         (bus, master)
     ) vga_producer (
             .clk                     (clk),
-            .rst                     (rst || !enable),
+            .rst                     (!vga_rst_n),
             `PARALLEL_IF__UNI_CONNECT(output_port, fifo_write),
             `BUS_IF__CONNECT         (bus, master),
             .strobe                  (strobe),
@@ -201,7 +201,7 @@ module vga_controller #(
     ) async_fifo (
         .read_clk      (vga_clk),
         .write_clk     (clk),
-        .rst           (rst || !enable),
+        .rst           (!vga_rst_n),
         `PARALLEL_IF__UNI_CONNECT(write_port, fifo_write),
         `PARALLEL_IF__UNI_CONNECT(read_port, fifo_read)
     );
@@ -210,7 +210,7 @@ module vga_controller #(
         `PARALLEL_IF__UNI_FILL_PARAMS(input_port, fifo_read)
     ) vga_consumer (
         .clk          (vga_clk),
-        .rst          (rst || !enable_sync),
+        .rst          (!vga_rst_n_sync),
         `PARALLEL_IF__UNI_CONNECT(input_port, fifo_read),
         .visible_area (visible_area),
         .mono         (mono_sync),

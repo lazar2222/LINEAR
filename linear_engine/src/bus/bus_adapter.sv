@@ -23,7 +23,7 @@ module bus_adapter #(
     wire [OFFSET_BITS-1:0] offset_next = slave_address[OFFSET_BITS-1:0];
     reg  [OFFSET_BITS-1:0] offset_reg;
 
-    assign slave_data_ptc    = master_data_ptc    >> (offset_reg  * DATA_WIDTH_s);
+    assign slave_data_ptc    = master_hit ? master_data_ptc >> (offset_reg  * DATA_WIDTH_s) : 'z;
     assign slave_hit_address = master_hit_address << OFFSET_BITS;
     assign slave_hit_mask    = master_hit_mask    << OFFSET_BITS;
     assign slave_hit         = master_hit;
