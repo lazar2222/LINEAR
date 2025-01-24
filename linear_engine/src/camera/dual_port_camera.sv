@@ -29,8 +29,8 @@ module dual_port_camera #(
 
     output shadow_error
 );
-    `BUS_IF__(config_port_a, DATA_WIDTH_config_port, BYTE_ADDRESS_WIDTH_config_port, BYTE_WIDTH_config_port);
-    `BUS_IF__(config_port_b, DATA_WIDTH_config_port, BYTE_ADDRESS_WIDTH_config_port, BYTE_WIDTH_config_port);
+    `BUS_IF__(config_port_a, DATA_WIDTH_config_port, BYTE_ADDRESS_WIDTH_config_port, BYTE_WIDTH_config_port)
+    `BUS_IF__(config_port_b, DATA_WIDTH_config_port, BYTE_ADDRESS_WIDTH_config_port, BYTE_WIDTH_config_port)
 
     bus_shadow_clone #(
         `BUS_IF__FILL_PARAMS(slave, config_port),

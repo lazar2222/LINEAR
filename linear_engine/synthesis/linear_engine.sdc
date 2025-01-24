@@ -10,6 +10,7 @@ derive_pll_clocks
 derive_clock_uncertainty
 
 set_false_path -from [get_clocks g_pll.system_pll|altera_pll|general[0].gpll~PLL_OUTPUT_COUNTER|divclk] -to [get_clocks g_pll.vga_pll|altera_pll|general[0].gpll~PLL_OUTPUT_COUNTER|divclk]
+set_false_path -from [get_clocks g_pll.vga_pll|altera_pll|general[0].gpll~PLL_OUTPUT_COUNTER|divclk] -to [get_clocks g_pll.system_pll|altera_pll|general[0].gpll~PLL_OUTPUT_COUNTER|divclk]
 
 set_false_path -from [get_ports {key*}] -to *
 set_false_path -from [get_ports {sw*} ] -to *

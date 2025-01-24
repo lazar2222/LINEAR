@@ -3,7 +3,7 @@
 module camera_pattern_bank #(
     parameter int WIDTH,
     parameter int PIXEL_WIDTH,
-    parameter int PATTERN_SIZE,
+    parameter int PATTERN_BYTE_SIZE,
     parameter int CAMERA_INSTANCES,
     parameter int BASE_ADDRESS,
     `BUS_IF__PARAMS(write_port)
@@ -18,15 +18,14 @@ module camera_pattern_bank #(
 );
     localparam int BYTE_WIDTH        = BYTE_WIDTH_write_port;
     localparam int BANK_DATA_WIDTH   = PIXEL_WIDTH * CAMERA_INSTANCES;
-    localparam int PATTERN_BYTE_SIZE = PATTERN_SIZE * PIXEL_WIDTH / BYTE_WIDTH;
 
-    `BUS_IF__(write_port_f, DATA_WIDTH_write_port, BYTE_ADDRESS_WIDTH_write_port, BYTE_WIDTH);
-    `BUS_IF__(write_port_w, BANK_DATA_WIDTH,       BYTE_ADDRESS_WIDTH_write_port, BYTE_WIDTH);
+    `BUS_IF__(write_port_f, DATA_WIDTH_write_port, BYTE_ADDRESS_WIDTH_write_port, BYTE_WIDTH)
+    `BUS_IF__(write_port_w, BANK_DATA_WIDTH,       BYTE_ADDRESS_WIDTH_write_port, BYTE_WIDTH)
 
-    `BUS_IF__(read_port_a,  BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH);
-    `BUS_IF__(read_port_b,  BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH);
-    `BUS_IF__(write_port_a, BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH);
-    `BUS_IF__(write_port_b, BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH);
+    `BUS_IF__(read_port_a,  BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH)
+    `BUS_IF__(read_port_b,  BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH)
+    `BUS_IF__(write_port_a, BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH)
+    `BUS_IF__(write_port_b, BANK_DATA_WIDTH, $clog2(PATTERN_BYTE_SIZE), BYTE_WIDTH)
 
     wire [CAMERA_INSTANCES-1:0][                   WIDTH-1:0] local_address;
     wire [CAMERA_INSTANCES-1:0][$clog2(CAMERA_INSTANCES)-1:0] offset_address;

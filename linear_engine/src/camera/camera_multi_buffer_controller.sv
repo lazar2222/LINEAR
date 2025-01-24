@@ -35,7 +35,10 @@ module camera_multi_buffer_controller #(
             write_address                <= write_address + 1'd1;
         end
         if (rst) begin
-            write_address <= 0;
+            sim_a_storage <= '0;
+            sim_b_storage <= '0;
+            sim_c_storage <= '0;
+            write_address <= '0;
         end
     end
 

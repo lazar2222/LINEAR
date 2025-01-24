@@ -30,5 +30,9 @@ def run(gui, convert, wave):
 if __name__ == "__main__":
     if "clean" in sys.argv:
         os.system("rmdir /s /q sim_build")
+    elif "list" in sys.argv:
+        for root, _, files in os.walk("..\\src"):
+            for file in files:
+                print(os.path.join(root, file))
     else:
         run("gui" in sys.argv, "convert" in sys.argv, "wave" in sys.argv)

@@ -34,8 +34,8 @@
     .``mod``_ready(``bus``_ready[i])  \
 
 `define PARALLEL_IF__BI(name, data_width) \
-    `PARALLEL_IF__UNI(``name``_tx, data_width); \
-    `PARALLEL_IF__UNI(``name``_rx, data_width); \
+    `PARALLEL_IF__UNI(``name``_tx, data_width) \
+    `PARALLEL_IF__UNI(``name``_rx, data_width) \
 
 `define PARALLEL_IF__BI_PARAMS(name) \
     `PARALLEL_IF__UNI_PARAMS(``name``_tx), \

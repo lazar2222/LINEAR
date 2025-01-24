@@ -64,7 +64,7 @@ module parallel_to_bus #(
     assign overflow          =  state_reg == STATE_READ && (result_counter != '0  || !parallel_tx_ready);
 
     assign miss  = state_reg == STATE_BUS && !bus_hit;
-    assign error = state_reg == STATE_BUS &&  bus_error;
+    assign error = state_reg == STATE_BUS &&  bus_hit && bus_error;
 
     always_comb begin
         case (op)

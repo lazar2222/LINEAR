@@ -118,11 +118,4 @@ module top #(
     assign led_vga_locked = vga_locked;
     assign led_running    = !rst;
 
-    // VGA setup
-
-    assign vga_clock = vga_clk;
-
-    // TEMPORARY
-
-
 endmodule

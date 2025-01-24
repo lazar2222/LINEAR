@@ -16,7 +16,9 @@ def init_inputs(dut):
     dut.hab_reset.value = 1
 
 async def start_clock(dut):
-    await cocotb.start(Clock(dut.clock_50, 100, units="ns").start())
+    #await cocotb.start(Clock(dut.clock_50, 20, units="ns").start())
+    await cocotb.start(Clock(dut.clk,      10, units="ns").start())
+    await cocotb.start(Clock(dut.vga_clk,  40, units="ns").start())
 
 async def reset(dut):
     dut.hab_reset.value = 1
@@ -34,4 +36,4 @@ async def clock_and_power(dut):
 async def my_first_test(dut):
     await clock_and_power(dut)
 
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 100000000000)
