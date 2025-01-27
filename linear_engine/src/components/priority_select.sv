@@ -1,4 +1,4 @@
-module priority_mask #(
+module priority_select #(
     parameter int WIDTH,
     parameter int COUNT
 ) (

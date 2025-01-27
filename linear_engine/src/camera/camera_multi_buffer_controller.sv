@@ -11,7 +11,7 @@ module camera_multi_buffer_controller #(
 
     input strobe,
 
-    input [$clog2(NUM_FRAMES)-1:0] read_address,
+    input [WIDTH-1:0] read_address,
 
     output [WIDTH-1:0] sim_a_buffer,
     output [WIDTH-1:0] sim_b_buffer,
@@ -23,9 +23,9 @@ module camera_multi_buffer_controller #(
 
     reg [$clog2(NUM_FRAMES)-1:0] write_address;
 
-    assign sim_a_buffer = sim_a_storage[read_address];
-    assign sim_b_buffer = sim_b_storage[read_address];
-    assign sim_c_buffer = sim_c_storage[read_address];
+    assign sim_a_buffer = sim_a_storage[read_address[$clog2(NUM_FRAMES)-1:0]];
+    assign sim_b_buffer = sim_b_storage[read_address[$clog2(NUM_FRAMES)-1:0]];
+    assign sim_c_buffer = sim_c_storage[read_address[$clog2(NUM_FRAMES)-1:0]];
 
     always @(posedge clk) begin
         if (strobe) begin

@@ -14,8 +14,7 @@ module camera_instance_block #(
 
     input strobe,
 
-    input [CAMERA_INSTANCES-1:0][$clog2(NUM_FRAMES)-1:0] camera_frame,
-
+    input [CAMERA_INSTANCES-1:0][WIDTH-1:0] camera_frame,
     input [CAMERA_INSTANCES-1:0][WIDTH-1:0] camera_x,
     input [CAMERA_INSTANCES-1:0][WIDTH-1:0] camera_y,
 
@@ -46,20 +45,25 @@ module camera_instance_block #(
     input [NUM_OBJECTS-1:0][  PIXEL_WIDTH-1:0] aux_max,
     input [NUM_OBJECTS-1:0][  PIXEL_WIDTH-1:0] aux_mask,
 
-    output [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][      WIDTH-1:0] pattern_address,
-    input  [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][PIXEL_WIDTH-1:0] pattern_data,
+    output [CAMERA_INSTANCES*NUM_OBJECTS-1:0][      WIDTH-1:0] pattern_address,
+    input  [CAMERA_INSTANCES*NUM_OBJECTS-1:0][PIXEL_WIDTH-1:0] pattern_data,
 
     output [CAMERA_INSTANCES-1:0][PIXEL_WIDTH-1:0] data
 );
+    wire [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][PIXEL_WIDTH-1:0] pattern_data_u = pattern_data;
+    wire [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][      WIDTH-1:0] pattern_address_u;
+
+    assign pattern_address = pattern_address_u;
+
     genvar i;
     generate
         for (i = 0; i < CAMERA_INSTANCES; i++) begin : g_camera_instances
-            camera_per_instance #(
+            camera_instance #(
                 .PIXEL_WIDTH    (PIXEL_WIDTH),
                 .NUM_FRAMES     (NUM_FRAMES),
                 .NUM_OBJECTS    (NUM_OBJECTS),
                 .WIDTH          (WIDTH)
-            ) camera_per_instance_inst (
+            ) camera_instance (
                 .clk            (clk),
                 .rst            (rst),
                 .sim_a          (sim_a),
@@ -94,8 +98,8 @@ module camera_instance_block #(
                 .aux_min        (aux_min),
                 .aux_max        (aux_max),
                 .aux_mask       (aux_mask),
-                .pattern_address(pattern_address[i]),
-                .pattern_data   (pattern_data[i]),
+                .pattern_address(pattern_address_u[i]),
+                .pattern_data   (pattern_data_u[i]),
                 .data           (data[i])
             );
         end

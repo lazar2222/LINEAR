@@ -26,7 +26,7 @@ module camera_block #(
     output [NUM_OBJECTS-1:0][      WIDTH-1:0] pattern_address,
     input  [NUM_OBJECTS-1:0][PIXEL_WIDTH-1:0] pattern_data,
 
-    input [PIXEL_WIDTH-1:0] aux_value,
+    input  [PIXEL_WIDTH-1:0] aux_value,
 
     output [PIXEL_WIDTH-1:0] data
 );
@@ -75,13 +75,16 @@ module camera_block #(
         end
     endgenerate
 
-    priority_mask #(
+    priority_select #(
         .WIDTH(PIXEL_WIDTH),
         .COUNT(NUM_OBJECTS)
-    ) priority_mask (
+    ) priority_select (
         .values(samples),
         .enable(visible),
-        .masked(data)
+        .masked(data),
+        .prio_enable(),
+        .prio_sel(),
+        .prio_any()
     );
 
 endmodule

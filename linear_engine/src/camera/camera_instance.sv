@@ -1,4 +1,4 @@
-module camera_per_instance #(
+module camera_instance #(
     parameter int PIXEL_WIDTH,
     parameter int NUM_FRAMES,
     parameter int NUM_OBJECTS,
@@ -13,8 +13,7 @@ module camera_per_instance #(
 
     input strobe,
 
-    input [$clog2(NUM_FRAMES)-1:0] camera_frame,
-
+    input [WIDTH-1:0] camera_frame,
     input [WIDTH-1:0] camera_x,
     input [WIDTH-1:0] camera_y,
 

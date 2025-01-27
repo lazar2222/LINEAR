@@ -27,20 +27,22 @@ module camera_bank #(
 );
     localparam int CAMERA_INSTANCES  = DATA_WIDTH_data_port / PIXEL_WIDTH;
     localparam int PATTERN_BYTE_SIZE = PATTERN_SIZE * PIXEL_WIDTH / BYTE_WIDTH_config_port;
-    localparam int SCREEN_X_WIDTH    = $clog2(SCREEN_WIDTH);
-    localparam int SCREEN_Y_WIDTH    = $clog2(SCREEN_HEIGHT);
-    localparam int FRAME_WIDTH       = $clog2(NUM_FRAMES);
 
-    wire [CAMERA_INSTANCES-1:0][   PIXEL_WIDTH-1:0] pixel_data;
-    wire [CAMERA_INSTANCES-1:0][SCREEN_X_WIDTH-1:0] camera_x;
-    wire [CAMERA_INSTANCES-1:0][SCREEN_Y_WIDTH-1:0] camera_y;
-    wire [CAMERA_INSTANCES-1:0][   FRAME_WIDTH-1:0] camera_frame;
+    wire [CAMERA_INSTANCES-1:0][PIXEL_WIDTH-1:0] pixel_data;
+    wire [CAMERA_INSTANCES-1:0][      WIDTH-1:0] camera_x;
+    wire [CAMERA_INSTANCES-1:0][      WIDTH-1:0] camera_y;
+    wire [CAMERA_INSTANCES-1:0][      WIDTH-1:0] camera_frame;
 
-    wire [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][      WIDTH-1:0] pattern_address;
-    wire [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][PIXEL_WIDTH-1:0] pattern_data;
+    wire [     CAMERA_INSTANCES*NUM_OBJECTS-1:0][      WIDTH-1:0] pattern_address_p;
+    wire [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][      WIDTH-1:0] pattern_address = pattern_address_p;
     wire [NUM_OBJECTS-1:0][CAMERA_INSTANCES-1:0][      WIDTH-1:0] pattern_address_pivot;
-    wire [NUM_OBJECTS-1:0][CAMERA_INSTANCES-1:0][PIXEL_WIDTH-1:0] pattern_data_pivot;
-
+    wire [     NUM_OBJECTS*CAMERA_INSTANCES-1:0][      WIDTH-1:0] pattern_address_pivot_p = pattern_address_pivot;
+    
+    wire [     NUM_OBJECTS*CAMERA_INSTANCES-1:0][PIXEL_WIDTH-1:0] pattern_data_pivot_p;
+    wire [NUM_OBJECTS-1:0][CAMERA_INSTANCES-1:0][PIXEL_WIDTH-1:0] pattern_data_pivot = pattern_data_pivot_p;
+    wire [CAMERA_INSTANCES-1:0][NUM_OBJECTS-1:0][PIXEL_WIDTH-1:0] pattern_data;
+    wire [     CAMERA_INSTANCES*NUM_OBJECTS-1:0][PIXEL_WIDTH-1:0] pattern_data_p = pattern_data;
+    
     wire [NUM_OBJECTS-1:0][        WIDTH-1:0] x1;
     wire [NUM_OBJECTS-1:0][        WIDTH-1:0] y1;
     wire [NUM_OBJECTS-1:0][        WIDTH-1:0] x2;
@@ -67,24 +69,6 @@ module camera_bank #(
     wire [        WIDTH-1:0] x_offset;
     wire [        WIDTH-1:0] y_offset;
     wire [        WIDTH-1:0] a_offset;
-
-    /*my_pivot #(
-        .DIM_A(CAMERA_INSTANCES),
-        .DIM_B(NUM_OBJECTS),
-        .WIDTH(WIDTH)
-    ) pivot_pattern_address (
-        .a(pattern_address),
-        .b(pattern_address_pivot)
-    );
-
-    my_pivot #(
-        .DIM_A(NUM_OBJECTS),
-        .DIM_B(CAMERA_INSTANCES),
-        .WIDTH(PIXEL_WIDTH)
-    ) pivot_pattern_data (
-        .a(pattern_data_pivot),
-        .b(pattern_data)
-    );*/
 
     genvar i, j;
     generate
@@ -137,12 +121,12 @@ module camera_bank #(
         .aux_min        (aux_min),
         .aux_max        (aux_max),
         .aux_mask       (aux_mask),
-        .pattern_address(pattern_address),
-        .pattern_data   (pattern_data),
+        .pattern_address(pattern_address_p),
+        .pattern_data   (pattern_data_p),
         .data           (pixel_data)
     );
 
-    camera_pattern_config #(
+    camera_config #(
         .BASE_ADDRESS       (CONFIG_BASE_ADDRESS),
         .PIXEL_WIDTH        (PIXEL_WIDTH),
         .NUM_OBJECTS        (NUM_OBJECTS),
@@ -150,12 +134,12 @@ module camera_bank #(
         .PATTERN_BYTE_SIZE  (PATTERN_BYTE_SIZE),
         .CAMERA_INSTANCES   (CAMERA_INSTANCES),
         `BUS_IF__FILL_PARAMS(config_port, config_port)
-    ) camera_pattern_config (
+    ) camera_config (
         .clk                  (clk),
         .rst                  (rst),
         `BUS_IF__CONNECT      (config_port, config_port),
-        .pattern_address_pivot(pattern_address_pivot),
-        .pattern_data_pivot   (pattern_data_pivot),
+        .pattern_address_pivot(pattern_address_pivot_p),
+        .pattern_data_pivot   (pattern_data_pivot_p),
         .x1                   (x1),
         .y1                   (y1),
         .x2                   (x2),
@@ -168,28 +152,19 @@ module camera_bank #(
         .aux_shiftd           (aux_shiftd),
         .aux_min              (aux_min),
         .aux_max              (aux_max),
-        .aux_mask             (aux_mask)
-    );
-
-    camera_global_config #(
-        .BASE_ADDRESS       (CONFIG_BASE_ADDRESS + NUM_OBJECTS * PATTERN_BYTE_SIZE * 2),
-        `BUS_IF__FILL_PARAMS(config_port, config_port)
-    ) camera_global_config (
-        .clk            (clk),
-        .rst            (rst),
-        `BUS_IF__CONNECT(config_port, config_port),
-        .x_channel      (x_channel),
-        .y_channel      (y_channel),
-        .a_channel      (a_channel),
-        .x_shamt        (x_shamt),
-        .y_shamt        (y_shamt),
-        .a_shamt        (a_shamt),
-        .x_shiftd       (x_shiftd),
-        .y_shiftd       (y_shiftd),
-        .a_shiftd       (a_shiftd),
-        .x_offset       (x_offset),
-        .y_offset       (y_offset),
-        .a_offset       (a_offset)
+        .aux_mask             (aux_mask),
+        .x_channel            (x_channel),
+        .y_channel            (y_channel),
+        .a_channel            (a_channel),
+        .x_shamt              (x_shamt),
+        .y_shamt              (y_shamt),
+        .a_shamt              (a_shamt),
+        .x_shiftd             (x_shiftd),
+        .y_shiftd             (y_shiftd),
+        .a_shiftd             (a_shiftd),
+        .x_offset             (x_offset),
+        .y_offset             (y_offset),
+        .a_offset             (a_offset)
     );
 
     camera_mem_interface #(
@@ -198,6 +173,7 @@ module camera_bank #(
         .SCREEN_WIDTH       (SCREEN_WIDTH),
         .SCREEN_HEIGHT      (SCREEN_HEIGHT),
         .NUM_FRAMES         (NUM_FRAMES),
+        .WIDTH              (WIDTH),
         `BUS_IF__FILL_PARAMS(port, data_port)
     ) camera_mem_interface (
         .clk            (clk),

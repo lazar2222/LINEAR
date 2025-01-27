@@ -1,6 +1,6 @@
 `include "../interfaces/bus_if.svh"
 
-module camera_per_object #(
+module camera_object_block #(
     parameter int BASE_ADDRESS,
     parameter int PIXEL_WIDTH,
     parameter int NUM_OBJECTS,

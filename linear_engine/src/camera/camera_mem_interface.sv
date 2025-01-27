@@ -6,6 +6,7 @@ module camera_mem_interface #(
     parameter int SCREEN_WIDTH,
     parameter int SCREEN_HEIGHT,
     parameter int NUM_FRAMES,
+    parameter int WIDTH,
     `BUS_IF__PARAMS(port)
 ) (
     input clk,
@@ -14,9 +15,9 @@ module camera_mem_interface #(
     `BUS_IF__SLAVE_PORTS(port),
 
     input  [DATA_WIDTH_port/PIXEL_WIDTH-1:0][          PIXEL_WIDTH-1:0] data_in,
-    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][ $clog2(SCREEN_WIDTH)-1:0] camera_x,
-    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][$clog2(SCREEN_HEIGHT)-1:0] camera_y,
-    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][   $clog2(NUM_FRAMES)-1:0] camera_frame
+    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][WIDTH-1:0] camera_x,
+    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][WIDTH-1:0] camera_y,
+    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][WIDTH-1:0] camera_frame
 );
     localparam int DATA_WIDTH               = DATA_WIDTH_port;
     localparam int BYTE_ADDRESS_WIDTH       = BYTE_ADDRESS_WIDTH_port;

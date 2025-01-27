@@ -11,8 +11,8 @@
     wire [        DATA_WIDTH_``name``-1:0] ``name``_data_ptc;                                              \
     wire [WORD_ADDRESS_WIDTH_``name``-1:0] ``name``_address;                                               \
     wire [         WORD_SIZE_``name``-1:0] ``name``_byte_enable;                                           \
-    wire [WORD_ADDRESS_WIDTH_``name``-1:0] ``name``_hit_address;                                           \
-    wire [WORD_ADDRESS_WIDTH_``name``-1:0] ``name``_hit_mask;                                              \
+    wor  [WORD_ADDRESS_WIDTH_``name``-1:0] ``name``_hit_address;                                           \
+    wor  [WORD_ADDRESS_WIDTH_``name``-1:0] ``name``_hit_mask;                                              \
     wire                                   ``name``_read;                                                  \
     wire                                   ``name``_write;                                                 \
     tri0                                   ``name``_hit;                                                   \
