@@ -5,7 +5,6 @@ module camera_mem_interface #(
     parameter int PIXEL_WIDTH,
     parameter int SCREEN_WIDTH,
     parameter int SCREEN_HEIGHT,
-    parameter int NUM_FRAMES,
     parameter int WIDTH,
     `BUS_IF__PARAMS(port)
 ) (
@@ -14,17 +13,16 @@ module camera_mem_interface #(
 
     `BUS_IF__SLAVE_PORTS(port),
 
-    input  [DATA_WIDTH_port/PIXEL_WIDTH-1:0][          PIXEL_WIDTH-1:0] data_in,
-    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][WIDTH-1:0] camera_x,
-    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][WIDTH-1:0] camera_y,
-    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][WIDTH-1:0] camera_frame
+    input  [DATA_WIDTH_port/PIXEL_WIDTH-1:0][PIXEL_WIDTH-1:0] data_in,
+    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][      WIDTH-1:0] camera_x,
+    output [DATA_WIDTH_port/PIXEL_WIDTH-1:0][      WIDTH-1:0] camera_y
 );
     localparam int DATA_WIDTH               = DATA_WIDTH_port;
     localparam int BYTE_ADDRESS_WIDTH       = BYTE_ADDRESS_WIDTH_port;
     localparam int BYTE_WIDTH               = BYTE_WIDTH_port;
     localparam int WORD_SIZE                = WORD_SIZE_port;
     localparam int WORD_ADDRESS_WIDTH       = WORD_ADDRESS_WIDTH_port;
-    localparam int SIZE_BYTES               = SCREEN_WIDTH * SCREEN_HEIGHT * NUM_FRAMES * PIXEL_WIDTH / BYTE_WIDTH;
+    localparam int SIZE_BYTES               = SCREEN_WIDTH * SCREEN_HEIGHT * PIXEL_WIDTH / BYTE_WIDTH;
     localparam int SIZE_WORDS               = SIZE_BYTES / WORD_SIZE;
     localparam int LOCAL_ADDRESS_WIDTH      = $clog2(SIZE_WORDS);
     localparam int LOCAL_BYTE_ADDRESS_WIDTH = $clog2(SIZE_BYTES);
@@ -34,7 +32,6 @@ module camera_mem_interface #(
     localparam int INSTANCE_WIDTH           = $clog2(CAMERA_INSTANCES);
     localparam int SCREEN_X_WIDTH           = $clog2(SCREEN_WIDTH);
     localparam int SCREEN_Y_WIDTH           = $clog2(SCREEN_HEIGHT);
-    localparam int FRAME_WIDTH              = $clog2(NUM_FRAMES);
 
     wire [DEVICE_ADDRESS_WIDTH-1:0] device_address = port_address[WORD_ADDRESS_WIDTH-1:LOCAL_ADDRESS_WIDTH];
     wire [ LOCAL_ADDRESS_WIDTH-1:0] local_address  = port_address[LOCAL_ADDRESS_WIDTH-1:0];
@@ -64,9 +61,8 @@ module camera_mem_interface #(
         for (i = 0; i < CAMERA_INSTANCES; i++) begin : g_data_out_a
             assign data_out[i*PIXEL_WIDTH+:PIXEL_WIDTH] = data_in[i];
             wire [LOCAL_BYTE_ADDRESS_WIDTH-1:0] local_byte_address = {local_address, i[INSTANCE_WIDTH-1:0]};
-            assign camera_x[i]     = local_byte_address[0+:SCREEN_X_WIDTH];
-            assign camera_y[i]     = local_byte_address[SCREEN_X_WIDTH+:SCREEN_Y_WIDTH];
-            assign camera_frame[i] = local_byte_address[SCREEN_X_WIDTH+SCREEN_Y_WIDTH+:FRAME_WIDTH];
+            assign camera_x[i] = local_byte_address[0+:SCREEN_X_WIDTH];
+            assign camera_y[i] = local_byte_address[SCREEN_X_WIDTH+:SCREEN_Y_WIDTH];
         end
     endgenerate
 

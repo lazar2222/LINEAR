@@ -71,20 +71,15 @@ module vga_controller #(
     `PARALLEL_IF__UNI(fifo_write, DATA_WIDTH_master)
     `PARALLEL_IF__UNI(fifo_read,  LOCAL_WORD_WIDTH)
 
-    reg  [BYTE_ADDRESS_WIDTH_master-1:0] base_address_1;
-    reg  [BYTE_ADDRESS_WIDTH_master-1:0] base_address_2;
+    reg  [BYTE_ADDRESS_WIDTH_master-1:0] base_address;
     reg                                  enable;
-    reg                                  double_buffered;
-    reg                                  buffer_flag;
     reg                                  compact;
     reg                                  mono;
     reg  [                          1:0] pixel_width_select;
 
-    wire [2*DATA_WIDTH_config_port-1:0] memory = {pixel_width_select, mono, compact, buffer_flag, double_buffered, enable, base_address_2, base_address_1};
+    wire [2*DATA_WIDTH_config_port-1:0] memory = {pixel_width_select, mono, compact, enable, base_address};
     wire [  DATA_WIDTH_config_port-1:0] memory_data;
     wire [                         1:0] memory_write;
-
-    wire [BYTE_ADDRESS_WIDTH_master-1:0] base_address = (!double_buffered || !buffer_flag) ? base_address_1 : base_address_2;
 
     wire [HORIZONTAL_BITS-1:0] x;
     wire [  VERTICAL_BITS-1:0] y;
@@ -114,25 +109,16 @@ module vga_controller #(
 
     always @(posedge clk) begin
         start_fill_reg <= start_fill_sync;
-        if (strobe) begin
-            buffer_flag <= !buffer_flag;
-        end
         if (memory_write[0]) begin
-            base_address_1     <= memory_data[0*BYTE_ADDRESS_WIDTH_master+:BYTE_ADDRESS_WIDTH_master];
-            base_address_2     <= memory_data[1*BYTE_ADDRESS_WIDTH_master+:BYTE_ADDRESS_WIDTH_master];
-            enable             <= memory_data[2*BYTE_ADDRESS_WIDTH_master+0];
-            double_buffered    <= memory_data[2*BYTE_ADDRESS_WIDTH_master+1];
-            buffer_flag        <= memory_data[2*BYTE_ADDRESS_WIDTH_master+2];
-            compact            <= memory_data[2*BYTE_ADDRESS_WIDTH_master+3];
-            mono               <= memory_data[2*BYTE_ADDRESS_WIDTH_master+4];
-            pixel_width_select <= memory_data[2*BYTE_ADDRESS_WIDTH_master+5+:2];
+            base_address       <= memory_data[0+:BYTE_ADDRESS_WIDTH_master];
+            enable             <= memory_data[BYTE_ADDRESS_WIDTH_master+0];
+            compact            <= memory_data[BYTE_ADDRESS_WIDTH_master+1];
+            mono               <= memory_data[BYTE_ADDRESS_WIDTH_master+2];
+            pixel_width_select <= memory_data[BYTE_ADDRESS_WIDTH_master+3+:2];
         end
         if (rst) begin
-            base_address_1     <= '0;
-            base_address_2     <= '0;
+            base_address     <= '0;
             enable             <= '0;
-            double_buffered    <= '0;
-            buffer_flag        <= '0;
             compact            <= '0;
             mono               <= '0;
             pixel_width_select <= '0;

@@ -184,10 +184,10 @@ set_location_assignment PIN_AB12 -to hab_int[2]
 set_global_assignment -name SDC_FILE linear_engine.SDC
 set_global_assignment -name SEARCH_PATH modules
 set_global_assignment -name SEARCH_PATH ../src/bus
-set_global_assignment -name SEARCH_PATH ../src/camera
+set_global_assignment -name SEARCH_PATH ../src/camera_lite
 set_global_assignment -name SEARCH_PATH ../src/components
 set_global_assignment -name SEARCH_PATH ../src/memory
-set_global_assignment -name SEARCH_PATH ../src/vga
+set_global_assignment -name SEARCH_PATH ../src/vga_lite
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/system/top.sv
 
 set_global_assignment -name ENABLE_SIGNALTAP OFF
