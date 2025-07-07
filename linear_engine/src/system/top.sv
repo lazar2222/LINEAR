@@ -70,6 +70,10 @@ module top #(
     wire clk, vga_clk;
     wire locked, vga_locked;
 
+    initial begin
+        assert (PLL == 1) else $error("PLL must be enabled for this design.");
+    end
+
     generate
         if (PLL == 1) begin : g_pll
             pll #(
@@ -117,5 +121,223 @@ module top #(
     assign led_locked     = locked;
     assign led_vga_locked = vga_locked;
     assign led_running    = !rst;
+
+    // TEMP
+
+    `BUS_IF__(config_port,  32, 32, 8)
+    `BUS_IF__(data_port,    32, 32, 8)
+    `BUS_IF__(data_port_w, 512, 32, 8)
+    `BUS_IF__(master_b,    512, 32, 8)
+
+    `PARALLEL_IF__BI(parallel, 8)
+    `PARALLEL_IF__BI(parallel_b, 8)
+
+    wire overflow_a, underflow_a, frame_error_a, miss_a, error_a;
+    wire overflow_b, underflow_b, frame_error_b, miss_b, error_b;
+    wire so1, so2, so3;
+    wire [15:0] sim_a, sim_b, sim_c;
+    wire done, shadow_error;
+
+    uart_xcvr #(
+        .CLOCK_RATE                 (144_000_000),
+        .BAUD_RATE                  (1_000_000),
+        `PARALLEL_IF__BI_FILL_PARAMS(parallel, parallel)
+    ) uart_xcvr_inst_a (
+        .clk                    (clk),
+        .rst                    (rst),
+        .rx                     (sim_rx),
+        .tx                     (sim_tx),
+        `PARALLEL_IF__BI_CONNECT(parallel, parallel),
+        .overflow               (overflow_a),
+        .frame_error            (frame_error_a)
+    );
+
+    uart_xcvr #(
+        .CLOCK_RATE                 (144_000_000),
+        .BAUD_RATE                  (1_000_000),
+        `PARALLEL_IF__BI_FILL_PARAMS(parallel, parallel_b)
+    ) uart_xcvr_inst_b (
+        .clk                    (clk),
+        .rst                    (rst),
+        .rx                     (sw_________),
+        .tx                     (sw________),
+        `PARALLEL_IF__BI_CONNECT(parallel, parallel_b),
+        .overflow               (overflow_b),
+        .frame_error            (frame_error_b)
+    );
+
+    parallel_to_bus #(
+        `PARALLEL_IF__BI_FILL_PARAMS_INVERTED(parallel, parallel),
+        `BUS_IF__FILL_PARAMS                 (bus, data_port)
+    ) parallel_to_bus_inst_a (
+        .clk                             (clk),
+        .rst                             (rst),
+        `PARALLEL_IF__BI_CONNECT_INVERTED(parallel, parallel),
+        `BUS_IF__CONNECT                 (bus, data_port),
+        .overflow                        (underflow_a),
+        .miss                            (miss_a),
+        .error                           (error_a)
+    );
+
+    assign led_          = parallel_to_bus_inst_a.result;
+
+    parallel_to_bus #(
+        `PARALLEL_IF__BI_FILL_PARAMS_INVERTED(parallel, parallel_b),
+        `BUS_IF__FILL_PARAMS                 (bus, config_port)
+    ) parallel_to_bus_inst_b (
+        .clk                             (clk),
+        .rst                             (rst),
+        `PARALLEL_IF__BI_CONNECT_INVERTED(parallel, parallel_b),
+        `BUS_IF__CONNECT                 (bus, config_port),
+        .overflow                        (underflow_b),
+        .miss                            (miss_b),
+        .error                           (error_b)
+    );
+
+    bus_adapter #(
+        `BUS_IF__FILL_PARAMS(slave, data_port),
+        `BUS_IF__FILL_PARAMS(master, data_port_w)
+    ) bus_adapter (
+        .clk(clk),
+        .rst(rst),
+        `BUS_IF__CONNECT(slave, data_port),
+        `BUS_IF__CONNECT(master, data_port_w)
+    );
+
+    /*camera_bank #(
+        .FRAME_BASE_ADDRESS(128 * 1024 * 4),
+        .CONFIG_BASE_ADDRESS(0),
+        .PIXEL_WIDTH(32),
+        .SCREEN_WIDTH(1024),
+        .SCREEN_HEIGHT(512),
+        .NUM_OBJECTS(2),
+        .WIDTH(20),
+        .PATTERN_SIZE(16),
+        `BUS_IF__FILL_PARAMS(data_port, data_port_w),
+        `BUS_IF__FILL_PARAMS(config_port, config_port)
+    ) camera_bank (
+        .clk(clk),
+        .rst(rst),
+        `BUS_IF__CONNECT(data_port, data_port_w),
+        `BUS_IF__CONNECT(config_port, config_port),
+        .strobe(btn_),
+        .sim_a(sim_a),
+        .sim_b(sim_b),
+        .sim_c(sim_c),
+        .done(done),
+        .shadow_error(shadow_error)
+    );
+
+    camera_bank #(
+        .FRAME_BASE_ADDRESS(128 * 1024 * 4 + 1024 * 512 * 4),
+        .CONFIG_BASE_ADDRESS(1024),
+        .PIXEL_WIDTH(32),
+        .SCREEN_WIDTH(1024),
+        .SCREEN_HEIGHT(512),
+        .NUM_OBJECTS(2),
+        .WIDTH(20),
+        .PATTERN_SIZE(16),
+        `BUS_IF__FILL_PARAMS(data_port, data_port_w),
+        `BUS_IF__FILL_PARAMS(config_port, config_port)
+    ) camera_bank_b (
+        .clk(clk),
+        .rst(rst),
+        `BUS_IF__CONNECT(data_port, data_port_w),
+        `BUS_IF__CONNECT(config_port, config_port),
+        .strobe(btn_),
+        .sim_a(sim_a),
+        .sim_b(sim_b),
+        .sim_c(sim_c),
+        .done(done),
+        .shadow_error(shadow_error)
+    );*/
+
+    mem_bank #(
+        .BASE_ADDRESS(128 * 1024 * 0),
+        .SIZE_BYTES  (128 * 1024),
+        .INIT_FILE   (""),
+        `BUS_IF__FILL_PARAMS(port_a, data_port_w),
+        `BUS_IF__FILL_PARAMS(port_b, master_b)
+    ) mem_bank_a (
+        .clk        (clk),
+        .rst        (rst),
+        `BUS_IF__CONNECT(port_a, data_port_w),
+        `BUS_IF__CONNECT(port_b, master_b)
+    );
+
+    mem_bank #(
+        .BASE_ADDRESS(128 * 1024 * 1),
+        .SIZE_BYTES  (128 * 1024),
+        .INIT_FILE   (""),
+        `BUS_IF__FILL_PARAMS(port_a, data_port_w),
+        `BUS_IF__FILL_PARAMS(port_b, master_b)
+    ) mem_bank_b (
+        .clk        (clk),
+        .rst        (rst),
+        `BUS_IF__CONNECT(port_a, data_port_w),
+        `BUS_IF__CONNECT(port_b, master_b)
+    );
+
+    mem_bank #(
+        .BASE_ADDRESS(128 * 1024 * 2),
+        .SIZE_BYTES  (128 * 1024),
+        .INIT_FILE   (""),
+        `BUS_IF__FILL_PARAMS(port_a, data_port_w),
+        `BUS_IF__FILL_PARAMS(port_b, master_b)
+    ) mem_bank_c (
+        .clk        (clk),
+        .rst        (rst),
+        `BUS_IF__CONNECT(port_a, data_port_w),
+        `BUS_IF__CONNECT(port_b, master_b)
+    );
+
+    mem_bank #(
+        .BASE_ADDRESS(128 * 1024 * 3),
+        .SIZE_BYTES  (128 * 1024),
+        .INIT_FILE   (""),
+        `BUS_IF__FILL_PARAMS(port_a, data_port_w),
+        `BUS_IF__FILL_PARAMS(port_b, master_b)
+    ) mem_bank_d (
+        .clk        (clk),
+        .rst        (rst),
+        `BUS_IF__CONNECT(port_a, data_port_w),
+        `BUS_IF__CONNECT(port_b, master_b)
+    );
+
+    /*shift_reg #(
+        .WIDTH(16)
+    ) sim_a_sr (
+        .clk(clk),
+        .rst(rst),
+        .latch(btn__),
+        .serial_in(sw____),
+        .serial_out(so1),
+        .data_in('0),
+        .data_out(sim_a)
+    );
+
+    shift_reg #(
+        .WIDTH(16)
+    ) sim_b_sr (
+        .clk(clk),
+        .rst(rst),
+        .latch(btn__),
+        .serial_in(so1),
+        .serial_out(so2),
+        .data_in('0),
+        .data_out(sim_b)
+    );
+
+    shift_reg #(
+        .WIDTH(16)
+    ) sim_c_sr (
+        .clk(clk),
+        .rst(rst),
+        .latch(btn__),
+        .serial_in(so2),
+        .serial_out(so3),
+        .data_in('0),
+        .data_out(sim_c)
+    );*/
 
 endmodule

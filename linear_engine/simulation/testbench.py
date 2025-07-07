@@ -2,6 +2,10 @@ import cocotb
 from cocotb.triggers import RisingEdge, FallingEdge, ClockCycles
 from cocotb.clock import Clock
 
+from src.drivers.bus_driver import BusMaster
+from src.drivers.uart_driver import UartTransceiver
+from src.drivers.access_bus_driver import AccessBusDriver
+
 def init_inputs(dut):
     dut.clock_50.value  = 1
 
@@ -34,6 +38,12 @@ async def clock_and_power(dut):
 
 @cocotb.test()
 async def my_first_test(dut):
+    xcvr = UartTransceiver(dut.clk, dut.sim_rx, dut.sim_tx, 144_000_000, 1_000_000)
+    dp = AccessBusDriver(xcvr, 30, 32)
     await clock_and_power(dut)
 
-    await ClockCycles(dut.clk, 100000000000)
+    dp.read(1024*512)
+
+    await dp.wait_complete()
+
+    await ClockCycles(dut.clk, 100)

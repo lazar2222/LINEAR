@@ -34,6 +34,7 @@ module vga_controller #(
     parameter int VERTICAL_FRONT_PORCH,
     parameter int VERTICAL_SYNC_PULSE,
     parameter int VERTICAL_BACK_PORCH,
+    parameter int OUTPUT_COMPONENT_WIDTH,
     parameter int CONFIG_BASE_ADDRESS,
     parameter int FIFO_DEPTH,
     `BUS_IF__PARAMS(master),
@@ -53,20 +54,22 @@ module vga_controller #(
     output vga_sync_n,
     output vga_blank_n,
 
-    output [7:0] vga_r,
-    output [7:0] vga_g,
-    output [7:0] vga_b,
+    output [OUTPUT_COMPONENT_WIDTH-1:0] vga_r,
+    output [OUTPUT_COMPONENT_WIDTH-1:0] vga_g,
+    output [OUTPUT_COMPONENT_WIDTH-1:0] vga_b,
 
     output overflow,
     output underflow,
     output miss,
     output error
 );
-    localparam int LOCAL_WORD_WIDTH = 32;
+    localparam int SIZE_WORDS       = 2;
+    localparam int LOCAL_WORD_WIDTH = 4 * OUTPUT_COMPONENT_WIDTH;
     localparam int HORIZONTAL_WHOLE = HORIZONTAL_VISIBLE_AREA + HORIZONTAL_FRONT_PORCH + HORIZONTAL_SYNC_PULSE + HORIZONTAL_BACK_PORCH;
     localparam int VERTICAL_WHOLE   = VERTICAL_VISIBLE_AREA   + VERTICAL_FRONT_PORCH   + VERTICAL_SYNC_PULSE   + VERTICAL_BACK_PORCH;
     localparam int HORIZONTAL_BITS  = $clog2(HORIZONTAL_WHOLE);
     localparam int VERTICAL_BITS    = $clog2(VERTICAL_WHOLE);
+    localparam int PWS_BITS         = $clog2($clog2(LOCAL_WORD_WIDTH)-1);
 
     `PARALLEL_IF__UNI(fifo_write, DATA_WIDTH_master)
     `PARALLEL_IF__UNI(fifo_read,  LOCAL_WORD_WIDTH)
@@ -75,9 +78,10 @@ module vga_controller #(
     reg                                  enable;
     reg                                  compact;
     reg                                  mono;
-    reg  [                          1:0] pixel_width_select;
+    reg  [                 PWS_BITS-1:0] pixel_width_select;
 
-    wire [2*DATA_WIDTH_config_port-1:0] memory = {pixel_width_select, mono, compact, enable, base_address};
+    wire [  DATA_WIDTH_config_port-1:0] base_address_mem = base_address;
+    wire [2*DATA_WIDTH_config_port-1:0] memory           = {pixel_width_select, mono, compact, enable, base_address_mem};
     wire [  DATA_WIDTH_config_port-1:0] memory_data;
     wire [                         1:0] memory_write;
 
@@ -91,7 +95,7 @@ module vga_controller #(
     wire strobe;
     wire underflow_ns;
 
-    wire vga_rst_n = !rst && enable;
+    wire vga_rst_n = !(rst || !enable);
 
     `VGA_CONTROLLER_SYNC(vga_rst_n);
     `VGA_CONTROLLER_SYNC(mono);
@@ -110,25 +114,27 @@ module vga_controller #(
     always @(posedge clk) begin
         start_fill_reg <= start_fill_sync;
         if (memory_write[0]) begin
-            base_address       <= memory_data[0+:BYTE_ADDRESS_WIDTH_master];
-            enable             <= memory_data[BYTE_ADDRESS_WIDTH_master+0];
-            compact            <= memory_data[BYTE_ADDRESS_WIDTH_master+1];
-            mono               <= memory_data[BYTE_ADDRESS_WIDTH_master+2];
-            pixel_width_select <= memory_data[BYTE_ADDRESS_WIDTH_master+3+:2];
+            base_address <= memory_data;
+        end
+        if (memory_write[1]) begin
+            enable             <= memory_data[0];
+            compact            <= memory_data[1];
+            mono               <= memory_data[2];
+            pixel_width_select <= memory_data[3+:PWS_BITS];
         end
         if (rst) begin
-            base_address     <= '0;
+            base_address       <= '0;
             enable             <= '0;
             compact            <= '0;
             mono               <= '0;
             pixel_width_select <= '0;
             start_fill_reg     <= '0;
-        end 
+        end
     end
 
     periph_mem_interface #(
         .BASE_ADDRESS       (CONFIG_BASE_ADDRESS),
-        .SIZE_WORDS         (2),
+        .SIZE_WORDS         (SIZE_WORDS),
         `BUS_IF__FILL_PARAMS(port, config_port)
     ) config_port (
         .clk              (clk),
@@ -185,26 +191,27 @@ module vga_controller #(
         `PARALLEL_IF__UNI_FILL_PARAMS(write_port, fifo_write),
         `PARALLEL_IF__UNI_FILL_PARAMS(read_port, fifo_read)
     ) async_fifo (
-        .read_clk      (vga_clk),
-        .write_clk     (clk),
-        .rst           (!vga_rst_n),
+        .read_clk                (vga_clk),
+        .write_clk               (clk),
+        .rst                     (!vga_rst_n),
         `PARALLEL_IF__UNI_CONNECT(write_port, fifo_write),
         `PARALLEL_IF__UNI_CONNECT(read_port, fifo_read)
     );
 
     vga_consumer #(
+        .OUTPUT_COMPONENT_WIDTH      (OUTPUT_COMPONENT_WIDTH),
         `PARALLEL_IF__UNI_FILL_PARAMS(input_port, fifo_read)
     ) vga_consumer (
-        .clk          (vga_clk),
-        .rst          (!vga_rst_n_sync),
+        .clk                     (vga_clk),
+        .rst                     (!vga_rst_n_sync),
         `PARALLEL_IF__UNI_CONNECT(input_port, fifo_read),
-        .visible_area (visible_area),
-        .mono         (mono_sync),
-        .pixel_width_select (pixel_width_select_sync),
-        .r            (vga_r),
-        .g            (vga_g),
-        .b            (vga_b),
-        .underflow    (underflow_ns)
+        .visible_area            (visible_area),
+        .mono                    (mono_sync),
+        .pixel_width_select      (pixel_width_select_sync),
+        .r                       (vga_r),
+        .g                       (vga_g),
+        .b                       (vga_b),
+        .underflow               (underflow_ns)
     );
 
 endmodule

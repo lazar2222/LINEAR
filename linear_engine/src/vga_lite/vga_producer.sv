@@ -18,9 +18,10 @@ module vga_producer #(
 
     input [BYTE_ADDRESS_WIDTH_bus-1:0] base_address,
     
-    input       compact,
-    input       mono,
-    input [1:0] pixel_width_select,
+    input compact,
+    input mono,
+    
+    input [$clog2($clog2(LOCAL_WORD_WIDTH)-1)-1:0] pixel_width_select,
     
     output overflow,
     output miss,
@@ -36,8 +37,8 @@ module vga_producer #(
     reg [           HEIGHT_BITS-1:0] y;
     reg [WORD_ADDRESS_WIDTH_bus-1:0] counter;
 
-    wire [5:0] components_per_word = LOCAL_WORD_WIDTH >> pixel_width_select;
-    wire [5:0] pixels_per_word     = mono ? components_per_word : (components_per_word >> 2);
+    wire [$clog2(LOCAL_WORD_WIDTH):0] components_per_word = LOCAL_WORD_WIDTH >> pixel_width_select;
+    wire [$clog2(LOCAL_WORD_WIDTH):0] pixels_per_word     = mono ? components_per_word : (components_per_word >> 2);
 
     wire [WORD_ADDRESS_WIDTH_bus-1:0] sparse_address_unadjusted = {y, x};
     wire [WORD_ADDRESS_WIDTH_bus-1:0] sparse_address_adjusted   = sparse_address_unadjusted >> ($clog2(WORDS_PER_READ) + $clog2(LOCAL_WORD_WIDTH) - (mono ? 0 : 2'd2) - pixel_width_select);
