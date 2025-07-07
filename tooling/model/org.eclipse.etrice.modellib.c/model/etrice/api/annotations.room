@@ -1,0 +1,109 @@
+/*******************************************************************************
+ * Copyright (c) 2019 protos software gmbh (http://www.protos.de).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ *******************************************************************************/
+ 
+RoomModel etrice.api.annotations {
+	
+	/**
+	  Meta information for elements that will be picked up by generators. Examples:
+	  <code><pre>
+	   	@MetaInfo(key="x", text="...")
+	   	
+	  	@MetaInfo(text="...")
+	  	
+	 	@MetaInfo(multiKeyText="
+		&#9; key1 : value
+		&#9; key2 : Some text with 
+		&#9;&#9; new line
+		")
+	  </code></pre>
+	 */
+	AnnotationType MetaInfo {
+		target = ActorClass // CaGe TestSuite and TestCase
+		optional attribute key: ptCharacter				// key=text
+		optional attribute text: ptCharacter			// text=text
+		optional attribute multiKeyText: ptCharacter	// key:text pairs separated by ':'
+	}
+	
+	/**
+	 * BehaviorManual suppresses the generation of the implementation file (.c) for an ActorClass
+	 */
+	AnnotationType BehaviorManual {
+		target = ActorBehavior
+	}
+	
+	/**
+	 * Special user code which is generated to the sub system instance.
+	 */
+	AnnotationType SubSystemUserCode {
+		target = ActorClass
+		mandatory attribute userCode: ptCharacter
+	}
+	
+	AnnotationType Deprecated {
+		target = {
+			ActorClass, DataClass, Message, Port, ProtocolClass, SubSystemClass, RoomModel
+		}
+		optional attribute error: ptBoolean
+		optional attribute noGenerate: ptBoolean
+	}
+	
+	/**
+	 * Instruments the given target for tracing. 
+	 * The tracing information can be found in the genmodel. At runtime, the generated code will call etMSCTracer.h.
+	 * The implementation is not part of of eTrice.
+	 */
+	AnnotationType Tracing {
+		target = {
+			ActorClass
+		}
+	}
+	
+	/**
+	 * A SubSystemClass or ActorClass having this annotation is construed as an instance.<br>
+	 * During generation the necessary instantiation (LogicalSystem, SubSystemRef etc.) and mapping will be created. 
+	 * <p>
+	 * Must not have LogicalThreads. Globally only once allowed. Runtime execution on DefaultThread of given PhysicalSystem.
+	 * </p>
+	 */
+	AnnotationType TestInstance {
+		target = { SubSystemClass, ActorClass }
+	}
+	
+	/**
+	 * Annotation to mark a test unstable. In case of failure, the test is be repeated up to 'maxRetries' times.
+	 */
+	AnnotationType UnstableTest {
+		target = ActorClass // CaGe TestCase
+		mandatory attribute maxRetries: ptInteger
+	}
+	
+	/**
+	 * Instructs the generator to copy the c-string located at the passed charPtr address into the message.
+	 * Without this annotation only the charPtr is send in the message which might lead to race conditions or use after free errors if it is not intended.
+	 * If this annotation is present you cannot define your own send handler in the port class. 
+	 */
+	AnnotationType StringMessage {
+		target = Message
+	}
+
+	/**
+	 * Indicates that an ActorClass uses a resource of the system that is otherwise not modeled in ROOM.
+	 * There is currently a single type of resource, "implicit" which is a static singleton resource with a given name that exists implicitly in the system.
+	 * The resource is consumed when an instance of the ActorClass is declared via an ActorRef, and it can be considered "locked" for the duration that the system is running.
+	 * This means that only a single Actor instance will be allowed in the system for any given resource.
+	 * A brief description can be added via the optional description attribute which will be included in generated metadata.
+	 */
+	AnnotationType UsesResource {
+		target = { ActorClass, SubSystemClass }
+		mandatory attribute implicit: ptCharacter
+		optional attribute description: ptCharacter
+	}
+}

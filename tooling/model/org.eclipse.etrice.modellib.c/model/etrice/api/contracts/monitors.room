@@ -1,0 +1,67 @@
+/**
+ * A contract monitor validates the contract definition at runtime.
+ * Interface (protocol) contracts are defined by actors having the annotation @InterfaceContractDefinition.
+ */
+RoomModel etrice.api.contracts.monitors {
+
+	import etrice.api.types.boolean
+	import etrice.api.types.string
+	
+	/** Protocol to get validation status and control monitor behavior. */
+	ProtocolClass PContractMonitorControl {
+		incoming {
+			/** Response is violationStatus */
+			Message getAndResetStatus()
+			/** Catch invalid messages according to contract (default false). */
+			Message setForwardInvalidMessages(boolean)
+		}
+		outgoing {
+			/** Current status: true == violationOccured. */
+			Message violationStatus(boolean)
+			/** Send each time when violation occurs. */
+			Message violationOccured()
+		}
+	}
+	
+	/** 
+	 * The base class for (generated) monitors.
+	 * Generated monitors require 'forwardInvalidMessages' and 'onViolation'.
+	 */
+	abstract ActorClass AContractMonitorBase {
+		Interface {
+			Port monitor_ctrl: PContractMonitorControl
+		}
+		Structure {
+			external Port monitor_ctrl
+			Attribute _violation: boolean
+			/** Required by generated monitors. */
+			Attribute forwardInvalidMessages: boolean
+		}
+		Behavior {
+			/** Required by generated monitors. */
+			Operation onViolation(comment: string) '''
+				_violation = true;
+				ET_MSC_LOGGER_VISIBLE_COMMENT(comment);
+				monitor_ctrl.violationOccured();
+			'''
+			StateMachine {
+				handler TransitionPoint _trBase
+				Transition _trStatus: my _trBase -> my _trBase {
+					triggers {
+						<getAndResetStatus: monitor_ctrl>
+					}
+					action '''
+						monitor_ctrl.violationStatus(_violation);
+						_violation = false;
+					'''
+				}
+				Transition _trForward: my _trBase -> my _trBase {
+					triggers {
+						<setForwardInvalidMessages: monitor_ctrl>
+					}
+					action '''forwardInvalidMessages = transitionData;'''
+				}
+			}
+		}
+	}
+}

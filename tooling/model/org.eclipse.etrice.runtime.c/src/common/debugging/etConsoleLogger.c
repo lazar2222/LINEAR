@@ -1,0 +1,60 @@
+/*******************************************************************************
+ * Copyright (c) 2019 protos software gmbh (http://www.protos.de).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * CONTRIBUTORS:
+ * 		Henrik Rentz-Reichert (initial contribution)
+ *
+ *******************************************************************************/
+
+#include <stdio.h>
+#include "debugging/etConsoleLogger.h"
+
+#define BUFFER_SIZE		1024
+static char buffer[BUFFER_SIZE];
+
+etLogger theConsoleLogger;
+static etBufferSender theConsoleSender;
+
+/*
+ * console sender with fixed buffer (may need synchronization)
+ */
+
+static void* etConsoleSender_getBuffer(etBufferSender* self, size_t size) {
+	ET_TOUCH(self);
+	if (size<BUFFER_SIZE) {
+		return buffer;
+	}
+	else {
+		return NULL;
+	}
+}
+
+void etConsoleSender_sendBuffer(etBufferSender* self, void* buffer, size_t size) {
+	ET_TOUCH(self);
+	ET_TOUCH(size);
+	
+	fprintf(stdout, "%s", (char*) buffer);
+	fflush(stdout);
+}
+
+
+void etConsoleLogger_init(void) {
+	static etBool initialized = ET_FALSE;
+	if (!initialized) {
+		initialized = ET_TRUE;
+
+		theConsoleSender.getBuffer = etConsoleSender_getBuffer;
+		theConsoleSender.sendBuffer = etConsoleSender_sendBuffer;
+
+		etLogger_init(&theConsoleLogger, &theConsoleSender);
+
+		etLogger_setAppendNewline(&theConsoleLogger, ET_TRUE);
+		etLogger_setUsePrefix(&theConsoleLogger, ET_TRUE);
+	}
+}

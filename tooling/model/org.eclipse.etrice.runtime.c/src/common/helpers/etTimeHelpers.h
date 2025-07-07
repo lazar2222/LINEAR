@@ -1,0 +1,108 @@
+/*******************************************************************************
+ * Copyright (c) 2013 protos software gmbh (http://www.protos.de).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * CONTRIBUTORS:
+ * 		Thomas Schuetz (initial contribution)
+ *
+ *******************************************************************************/
+
+/**
+ * \file etTimeHelpers.h
+ *
+ * a collection of useful methods when working with \ref etTime values
+ *
+ * \author Thomas Schuetz, Henrik Rentz-Reichert
+ */
+
+#ifndef _ETTIMEHELPERS_H_
+#define _ETTIMEHELPERS_H_
+
+#include "osal/etTime.h"
+
+ET_EXTERN_C_BEGIN
+
+/**
+ * normalizes the time value to ensure that 0 <= nSec < 1E9. A multiple of 1E9 nanoseconds from nSec
+ * may be transferred as seconds to the sec member. The resulting changed etTime value will be
+ * equivalent to the input value, unless a positive or negative wraparound of the sec member
+ * occurs. No detection of the wraparound condition is performed.
+ *
+ * \param[in,out] self the time value to be normalized
+ */
+void etTimeHelpers_normalize(etTime* self);
+
+/**
+ * computes the difference of two times
+ *
+ * \param self the this pointer
+ * \param subtractValue the time to be subtracted
+ */
+void etTimeHelpers_subtract(etTime *self, const etTime* subtractValue);
+
+/**
+ * computes the difference of two times
+ *
+ * \param first the first operand
+ * \param second the second operand
+ * \return the result as a time diff
+ */
+etTimeDiff etTimeHelpers_delta(const etTime* first, const etTime* second);
+
+/**
+ * computes the sum of two times
+ *
+ * \param self the this pointer
+ * \param addValue the time to be added
+ */
+void etTimeHelpers_add(etTime *self, const etTime* addValue);
+
+/**
+ * copies time from source to target
+ *
+ * \param source source of values to copy from
+ * \param target target to copy to
+ */
+void etTimeHelpers_copy(const etTime* source, etTime* target);
+
+#ifdef ET_INT64
+/**
+ * convert a time to milliseconds
+ *
+ * \param time the time to be converted
+ */
+etInt64 etTimeHelpers_convertToMSec(const etTime *time);
+#endif
+
+/**
+ * convert a time from milliseconds
+ *
+ * \param result the structure obtaining the result
+ * \param milliSeconds the time to be converted
+ */
+void etTimeHelpers_convertToEtTime(etTime *result, etInt32 milliSeconds);
+
+/**
+ * check if t1 is greater than t2
+ *
+ * \param t1 first time
+ * \param t2 second time
+ */
+etBool etTimeHelpers_isGreater(etTime* t1, etTime* t2);
+
+/**
+ * check if t1 is greater than or equal as t2
+ *
+ * \param t1 first time
+ * \param t2 second time
+ */
+etBool etTimeHelpers_isGreaterOrEqual(etTime* t1, etTime* t2);
+
+ET_EXTERN_C_END
+
+#endif /* _ETTIMEHELPERS_H_ */

@@ -1,0 +1,352 @@
+/*******************************************************************************
+ * Copyright (c) 2019 protos software gmbh (http://www.protos.de).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ *******************************************************************************/
+ 
+RoomModel etrice.api.timer {
+
+	import etrice.api.types.boolean
+	import etrice.api.types.int8
+	import etrice.api.types.int32
+	import etrice.api.types.uint32
+	import etrice.api.types.uint16
+	import etrice.api.types.voidType
+
+	/**
+	 * Defines the communication protocol to control a single timer.
+	 */
+	ProtocolClass PTimer {
+		usercode1 '''
+			#include "osal/etTime.h" 
+			typedef struct etTCB etTimerControlBlock; 
+			struct etTCB {
+				etTime expTime;
+				etTime pTime;
+				int32 portIdx;
+				uint16 timeId;
+				etTimerControlBlock* next;
+			};
+		'''
+		usercode3 '''
+			#define ET_TIMER_IDLE		0x00
+			#define ET_TIMER_ONCE		0x01
+			#define ET_TIMER_PERIODIC	0x02
+		'''
+		incoming {
+
+			/**
+			 * Start a timer that notifies every time the specified period in milliseconds expires.
+			 * This has no effect if there is already an active timer or timeout.
+			 */
+			Message startTimer(uint32)
+
+			/**
+			 * Start a timeout that notifies once when the specified duration in milliseconds expires.
+			 * This has no effect if there is already an active timer or timeout.
+			 */
+			Message startTimeout(uint32)
+
+			/**
+			 * Stop an active timer or timeout.
+			 * This has no effect if neither a timer nor a timeout is active.
+			 */
+			Message kill()
+
+			// internal start messages, similar names for msc logging
+			private Message _startTimer(DStartTimer)
+			private Message _startTimeout(DStartTimer)
+		}
+		outgoing {
+
+			/**
+			 * Inform about an expired timer or timeout.
+			 */
+			Message timeout()
+			
+			// internal timeout message, similar names for msc logging. Payload is the timeId.
+			private Message _timeout(uint16)
+		}
+		regular PortClass
+		{
+			Attribute tcb: tcb
+		}
+		conjugated PortClass
+		{
+			handle incoming startTimer '''
+				if (status == ET_TIMER_IDLE) {
+					status = ET_TIMER_PERIODIC;
+					DStartTimer _data = { .timeMs = data__et, .timeId = ++currentTimeId };
+					PTimerConjPort__startTimer(self, &_data);
+				}'''
+			handle incoming startTimeout '''
+				if (status == ET_TIMER_IDLE) {
+					status = ET_TIMER_ONCE;
+					DStartTimer _data = { .timeMs = data__et, .timeId = ++currentTimeId };
+					PTimerConjPort__startTimeout(self, &_data);
+				}'''
+			handle outgoing _timeout '''
+				ET_MSC_LOGGER_ASYNC_IN(self->peerInstName, "_timeout", self->myInstName);
+				uint16 receivedTimeId = *((uint16*) etPort_getMessageDataPtr(msg));
+				if (status != ET_TIMER_IDLE && receivedTimeId == currentTimeId){
+					status = (status == ET_TIMER_ONCE) ? ET_TIMER_IDLE : ET_TIMER_PERIODIC;
+					/* msg to fsm */
+					etMessage _data = (etMessage) { .address = msg->address, .evtID = PTimer_OUT_timeout };
+					(*receiveMessageFunc)(actor, self, &_data);
+				} else {
+					// add note for drop - omitting ASYNC_IN would cause wrong message receive order
+					ET_MSC_LOGGER_NOTE(self->myInstName, "obsolete timeout dropped");
+				}
+				'''
+			handle incoming kill '''
+				if (status != ET_TIMER_IDLE) {
+					status = ET_TIMER_IDLE;
+					etPort_sendMessage(self, PTimer_IN_kill, 0, NULL);
+					ET_MSC_LOGGER_ASYNC_OUT(self->myInstName, "kill", self->peerInstName);
+				}'''
+			Attribute status: int8 = "0"
+			Attribute currentTimeId: uint16 = "0"
+		}
+	}
+
+	DataClass DStartTimer {
+		Attribute timeMs: uint32
+		Attribute timeId: uint16
+	}
+
+	ProtocolClass PTimerSupervisionControl {
+		incoming {
+
+			/** Reset the deviation high water mark. */
+			Message restTimerDeviationHighWaterMark()
+
+			/** Request the deviation high water mark. */
+			Message getTimerDeviationHighWaterMark()
+		}
+		outgoing {
+
+			/** Inform about the deviation high water mark in microseconds. */
+			Message timerDeviationHighWaterMark(uint32)
+		}
+	}
+
+	/**
+	 * Provides a service to create and control timers. The service runs according to the polling
+	 * interval of its assigned physical thread, meaning that the effective resolution of the 
+	 * timeouts sent by the service is bounded by the polling interval.
+	 * 
+	 * <p><b>Late Periodic Timeout Recovery:</b><br/>
+	 * It is possible that a periodic timeout is late enough, that the next scheduled timeout
+	 * would already be in the past. In this case, the service will attempt to recover by
+	 * rescheduling the timeout for the current time plus period interval. This recovery attempt is
+	 * intended to mitigate the scenario where too many late timeouts overrun the message service.
+	 * </p>
+	 */
+	async ActorClass ATimerService {
+		Interface {
+			SPP timer: PTimer
+			SPP supervisionControl: PTimerSupervisionControl
+		}
+		Structure {
+			usercode1 '''
+				#include "osal/etTime.h" 
+				#include "helpers/etTimeHelpers.h"
+			'''
+			ServiceImplementation of timer
+			ServiceImplementation of supervisionControl
+
+			Attribute usedTcbsRoot: tcb ref
+			Attribute timerDeviationHighWaterMark: targetTime
+		}
+		Behavior {
+			Operation removeTcbFromUsedList(idx: int32) '''
+				etTimerControlBlock *temp = usedTcbsRoot;
+				etTimerControlBlock *temp2 = usedTcbsRoot;
+				
+				if (temp == 0)
+					return;
+				
+				if (usedTcbsRoot->portIdx == idx) {
+					/* element found, the first one */
+					usedTcbsRoot = usedTcbsRoot->next;
+					return;
+				}
+				
+				temp = temp->next;
+				while (temp != 0) {
+					if (temp->portIdx == idx) {
+						temp2->next = temp->next;
+						return;
+					} else {
+						/* try next */
+						temp2 = temp;
+						temp = temp->next;
+					}
+				}
+			'''
+			Operation putTcbToUsedList(block: tcb ref) '''
+				etTimerControlBlock *temp = usedTcbsRoot;
+				etTimerControlBlock *temp2 = usedTcbsRoot;
+				
+				if (temp == 0) {
+					/* list empty put new block to root */
+					block->next = 0;
+					usedTcbsRoot = block;
+					return;
+				}
+				
+				while (1) {
+					if (temp != 0) {
+						if (etTimeHelpers_isGreater(&block->expTime, &temp->expTime)) {
+							/* try next position */
+							temp2 = temp;
+							temp = temp->next;
+						} else {
+							/* right position found */
+							block->next = temp;
+							if (temp == usedTcbsRoot) {
+								usedTcbsRoot = block;
+							} else {
+								temp2->next = block;
+							}
+							return;
+						}
+					} else {
+						/* end of list reached */
+						block->next = 0;
+						temp2->next = block;
+						return;
+					}
+				}
+			'''
+			Operation getTime(t: targetTime ref) '''
+				ET_TOUCH(self);
+				getTimeFromTarget(t);
+			'''
+			Operation queueTcb(ifitem: voidType ref, startTimer: DStartTimer ref, periodic: boolean) '''
+				// The portclass blocks repeated start messages if a timer is running
+				etAddressId portIdx = ((etReplSubPort*) ifitem)->index;
+				PTimerPort_var *portClassVarData = (PTimerPort_var*) (self->constData->timer.ports[portIdx].port.varData);
+				etTimerControlBlock *tcb = &(portClassVarData->tcb);
+				etTime t;
+				if (tcb != 0) {
+					t.sec = (etInt32) (startTimer->timeMs / 1000U);
+					t.nSec = (etInt32) ((startTimer->timeMs % 1000U) * 1000000U);
+					if (periodic) {
+						tcb->pTime = t;
+					} else {
+						tcb->pTime.sec = 0;
+						tcb->pTime.nSec = 0;
+					}
+					tcb->portIdx = ((etReplSubPort*) ifitem)->index;
+					tcb->timeId = startTimer->timeId;
+					getTime(&(tcb->expTime));
+					etTimeHelpers_add(&(tcb->expTime), &t);
+					putTcbToUsedList(tcb);
+				} else {
+					etLogger_logError("ATimerService: no timer available!");
+				}
+			'''
+			StateMachine {
+				Transition tr0: initial -> Operational {
+					action '''
+						usedTcbsRoot=0;
+						timerDeviationHighWaterMark.sec = 0;
+						timerDeviationHighWaterMark.nSec = 0;
+					'''
+				}
+				Transition tr1: Operational -> Operational {
+					triggers {
+						<_startTimeout: timer>
+					}
+					action '''queueTcb((void*) ifitem, transitionData, false);'''
+				}
+				Transition tr3: Operational -> Operational {
+					triggers {
+						<_startTimer: timer>
+					}
+					action '''queueTcb((void*) ifitem, transitionData, true);'''
+				}
+				Transition tr4: Operational -> Operational {
+					triggers {
+						<kill: timer>
+					}
+					action '''removeTcbFromUsedList(((etReplSubPort*)ifitem)->index);'''
+				}
+				State Operational {
+					do '''
+						/* maintain timers */
+						etTimerControlBlock *temp;
+						etTime t;
+						
+						getTime(&t);
+						while (usedTcbsRoot != 0) {
+							if (etTimeHelpers_isGreater(&t, &(usedTcbsRoot->expTime))) {
+								// maintain deviation hig water mark
+								etTime delta = t;
+								etTimeHelpers_subtract(&delta, &(usedTcbsRoot->expTime));
+								if (etTimeHelpers_isGreater(&delta, &timerDeviationHighWaterMark)) {
+									timerDeviationHighWaterMark = delta;
+								}
+								timer[usedTcbsRoot->portIdx]._timeout(usedTcbsRoot->timeId);
+								temp = usedTcbsRoot;
+								usedTcbsRoot = usedTcbsRoot->next;
+								if ((temp->pTime.sec == 0) && (temp->pTime.nSec == 0)) {
+									/* single shot timer */
+								} else {
+									/* periodic timer */
+									etTimeHelpers_add(&temp->expTime, &temp->pTime);
+									// if new expiry time is before current time, recover and notify
+									if (etTimeHelpers_isGreater(&t, &(temp->expTime))) {
+										temp->expTime = t;
+										etTimeHelpers_add(&(temp->expTime), &(temp->pTime));
+										etLogger_logError("ATimerService: late periodic timeout dropped and rescheduled!");
+									}
+									putTcbToUsedList(temp);
+								}
+							} else {
+								break;
+							}
+						}
+					'''
+				}
+				Transition tr2: Operational -> Operational {
+					triggers {
+						<getTimerDeviationHighWaterMark: supervisionControl>
+					}
+					action '''
+						uint32 dt;
+						
+						dt = timerDeviationHighWaterMark.nSec / 1000 + timerDeviationHighWaterMark.sec * 1000000;
+						supervisionControl[((etReplSubPort*)ifitem)->index].timerDeviationHighWaterMark(dt);'''
+				}
+				Transition tr5: Operational -> Operational {
+					triggers {
+						<restTimerDeviationHighWaterMark: supervisionControl>
+					}
+					action '''
+						ET_TOUCH(ifitem);
+						timerDeviationHighWaterMark.sec = 0;
+						timerDeviationHighWaterMark.nSec = 0;'''
+				}
+			}
+		}
+	}
+
+//	ProtocolClass PTimerSupervisionControl {
+//		incoming {
+//			Message startSupervision(uint32) ["send the time threshold in us! "]
+//			Message stopSupervision()
+//		}
+//		outgoing {
+//			Message timerAccuracyFault(uint32) ["will be sent when the threshold is reached for one single timer. The parameter can be checked by the receiver to verify that it is the own limit"]
+//		}
+//	}
+	ExternalType tcb -> "etTimerControlBlock" default "{{0,0},{0,0},0,0U,NULL}"
+	ExternalType targetTime -> "etTime" default "{0,0}"
+}
