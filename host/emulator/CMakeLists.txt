@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.31)
-project(emulator C)
+project(emulator CXX)
 
-set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_STANDARD 23)
 
-add_executable(emulator main.c)
+file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "main.cpp" "components/*.cpp")
+
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
