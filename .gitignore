@@ -1,1 +1,15 @@
+# IDE
 .idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# CMake build
+host/emulator/build/
+
+# Generated files
+host/archgen/generated/
