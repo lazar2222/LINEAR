@@ -13,3 +13,6 @@ host/emulator/build/
 
 # Generated files
 host/archgen/generated/
+
+# Agentic development (for now)
+AGENTS.md
