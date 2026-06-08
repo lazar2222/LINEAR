@@ -45,7 +45,11 @@ __all__ = [
     "tnames",
 
     "is_in",
-    "valid_refs",
+    "same_elements",
+
+    "check_refs",
+    "check_unreferenced",
+    "check_unique_by",
 ]
 
 # Checker
@@ -66,11 +70,11 @@ def waive_warning(message: str) -> None:
     _WAIVED_WARNINGS.add(message)
 
 @overload
-def check(condition: bool,                                *, warning: bool = False, message: str | Callable[[bool], str]) -> None: ...
+def check(condition: bool,                                *, warning: bool = False, message: str | Callable[[bool], str], stacklevel: int = 2) -> None: ...
 @overload
-def check(enable:    bool, condition: bool,               *, warning: bool = False, message: str | Callable[[bool], str]) -> None: ...
+def check(enable:    bool, condition: bool,               *, warning: bool = False, message: str | Callable[[bool], str], stacklevel: int = 2) -> None: ...
 
-def check(enable:    bool, condition: bool | None = None, *, warning: bool = False, message: str | Callable[[bool], str]) -> None:
+def check(enable:    bool, condition: bool | None = None, *, warning: bool = False, message: str | Callable[[bool], str], stacklevel: int = 2) -> None:
     if callable(message):
         message   = message(warning)
     if condition is None:
@@ -84,7 +88,7 @@ def check(enable:    bool, condition: bool | None = None, *, warning: bool = Fal
                 if _WAIVED_MODE is WaiveMode.FULL:
                     print(f"Warning waived: {message}", file=stderr)
             else:
-                warn(message, stacklevel=2)
+                warn(message, stacklevel=stacklevel)
         else:
             raise ValueError(message)
 
@@ -160,14 +164,20 @@ def fnames    (itr: Any) -> tuple[str, ...]: return tuple(i.name   for i in itr 
 def cnames    (itr: Any) -> tuple[str, ...]: return tuple(cname(i) for i in itr                                   )
 def tnames    (itr: Any) -> tuple[str, ...]: return tuple(tname(i) for i in itr                                   )
 
-def is_in(obj: Any, container: Any) -> bool: return any(obj is element for element in container)
+def is_in        (obj: Any, container: Any) -> bool: return any(obj is element for element in container)
+def same_elements(a:   Any, b:         Any) -> bool: return len(a) == len(b) and all(l is r for l, r in zip(a, b))
 
-def valid_refs(itr: Any, refs: Callable[[Any], Any], container: Any) -> bool:
-    valid = []
-    for element in itr:
-        ref = refs(element)
-        if is_in(type(ref), (tuple, list, set, frozenset)):
-            valid.append(all(is_in(elem, container) for elem in ref))
-        else:
-            valid.append(    is_in(ref,  container)                 )
-    return all(valid)
+def check_refs        (x: str, y: str,         itr: Any, map: Callable[[Any], Any], defs: Any,                 *, warning: bool = False) -> None:
+    for ref in itr:
+        for obj in tuple(map(ref)) if is_in(type(map(ref)), (tuple, list)) else (map(ref),):
+            check(is_in(obj, defs), warning=warning, message=fxmby(x + " of " + tname(ref) + " " + got(getattr(ref, "name", str(ref))), "present in " + y, got(getattr(obj, "name", str(obj))), "missing"),                stacklevel=3)
+
+def check_unreferenced(x: str, y: str, w: str, itr: Any, map: Callable[[Any], Any], defs: Any,                 *, warning: bool = False) -> None:
+    refs = tuple(obj for ref in itr for obj in (tuple(map(ref)) if is_in(type(map(ref)), (tuple, list)) else (map(ref),)))
+    for def_ in defs:
+        check(is_in(def_, refs),    warning=warning, message=fxmby(x + " " + got(getattr(def_, "name", str(def_))), "referenced by " + y, got(getattr(def_, "name", str(def_))), "unreferenced by " + w),                  stacklevel=3)
+
+def check_unique_by   (x: str, y: str,         itr: Any, key: Callable[[Any], Any], val: Callable[[Any], Any], *, warning: bool = False) -> None:
+    for k in dict.fromkeys(key(obj) for obj in itr):
+        values =     tuple(val(obj) for obj in itr if key(obj) == k)
+        check(unique(values),       warning=warning, message=fxmby(x + " for " + y + " " + got(getattr(k, "name", str(k))), "unique", got(seq(values)), has("the following duplicates " + got(seq(duplicates(values))))), stacklevel=3)

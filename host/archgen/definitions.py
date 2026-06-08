@@ -3,7 +3,7 @@ import re
 from dataclasses import dataclass, KW_ONLY
 from enum        import Enum
 
-from checker     import check, duplicates, empty, fnames, fxmby, got, has, have, none, seq, single, sseq, tname, unique
+from checker     import check, duplicates, empty, fnames, fxmby, got, has, have, none, same_elements, seq, single, tname, unique
 from validator   import validated, Constraint
 
 # Exports
@@ -84,11 +84,12 @@ class IndexEntry:
     def has_desc (self) -> bool: return self.desc  is not None
 
     def symbol_name(self) -> str: return self.name.upper()
+    def alias_name (self) -> str: return self.alias.upper() if self.has_alias() else self.symbol_name()
 
     def projected_names(self) -> tuple[str, ...]:
         result      = [self.symbol_name(), self.index.name.upper() + "_" + self.symbol_name(), self.index.symbol_name() + "_" + self.symbol_name()]
         if self.has_alias():
-            result += [self.alias.upper(), self.index.name.upper() + "_" + self.alias.upper(), self.index.symbol_name() + "_" + self.alias.upper()]
+            result += [self.alias_name(),  self.index.name.upper() + "_" + self.alias_name(),  self.index.symbol_name() + "_" + self.alias_name() ]
         return tuple(result)
 
     # Potential helpers: get_alias() to return alias or name, qualified_name() to return "index.name" or "index.alias", max_value(), fits_index()
@@ -176,15 +177,15 @@ class InstructionFormat:
     fields: tuple[InstructionField | Jam | Slice, ...]
 
     def __post_init__(self) -> None:
-        check(   unique(self.non_slice_fields()),                                           message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), "unique and not of IMMEDIATE type with at least one OPCODE type field", got(seq(fnames(self.non_slice_fields()))), has("the following duplicates "            + got(sseq(fnames(duplicates(self.non_slice_fields())))))                ))
-        check(    empty(self.fields_of_type(InstructionFieldType.IMMEDIATE)),               message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), "unique and not of IMMEDIATE type with at least one OPCODE type field", got(seq(fnames(self.non_slice_fields()))), has("the following IMMEDIATE type fields " + got( seq(fnames(self.fields_of_type(InstructionFieldType.IMMEDIATE)))))))
-        check(not empty(self.fields_of_type(InstructionFieldType.OPCODE   )),               message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), "unique and not of IMMEDIATE type with at least one OPCODE type field", got(seq(fnames(self.non_slice_fields()))), has("no OPCODE type fields")                                                                                        ))
+        check(   unique(self.non_slice_fields()),                                           message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), "unique and not of IMMEDIATE type with at least one OPCODE type field", got(seq(fnames(self.non_slice_fields()))), has("the following duplicates "            + got(seq(fnames(duplicates(self.non_slice_fields())))))                ))
+        check(    empty(self.fields_of_type(InstructionFieldType.IMMEDIATE)),               message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), "unique and not of IMMEDIATE type with at least one OPCODE type field", got(seq(fnames(self.non_slice_fields()))), has("the following IMMEDIATE type fields " + got(seq(fnames(self.fields_of_type(InstructionFieldType.IMMEDIATE)))))))
+        check(not empty(self.fields_of_type(InstructionFieldType.OPCODE   )),               message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), "unique and not of IMMEDIATE type with at least one OPCODE type field", got(seq(fnames(self.non_slice_fields()))), has("no OPCODE type fields")                                                                                       ))
         for field, (slices, bits, overlapping, missing) in self.immediate_infos().items():
-            check(empty(overlapping),                                                       message=fxmby("sliced IMMEDIATE type field " + got(field.name) + " in InstructionFormat " + got(self.name), "composed of contiguous non-overlapping slices",                        got(seq(slices)),                          "overlapping at bits " + got(seq(overlapping))                                                                      ))
-            check(empty(missing    ),                                                       message=fxmby("sliced IMMEDIATE type field " + got(field.name) + " in InstructionFormat " + got(self.name), "composed of contiguous non-overlapping slices",                        got(seq(slices)),                          "missing bits "        + got(seq(missing    ))                                                                      ))
-        check(   single(self.fields_of_type(InstructionFieldType.OPCODE   )), warning=True, message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), have("exactly one OPCODE type field"),                                  got(seq(fnames(self.non_slice_fields()))), has(got(len(self.fields_of_type(InstructionFieldType.OPCODE))) + " OPCODE type fields")                             ))
+            check(empty(overlapping),                                                       message=fxmby("sliced IMMEDIATE type field " + got(field.name) + " in InstructionFormat " + got(self.name), "composed of contiguous non-overlapping slices",                        got(seq(slices)),                          "overlapping at bits " + got(seq(overlapping))                                                                     ))
+            check(empty(missing    ),                                                       message=fxmby("sliced IMMEDIATE type field " + got(field.name) + " in InstructionFormat " + got(self.name), "composed of contiguous non-overlapping slices",                        got(seq(slices)),                          "missing bits "        + got(seq(missing    ))                                                                     ))
+        check(   single(self.fields_of_type(InstructionFieldType.OPCODE   )), warning=True, message=fxmby("non-slice fields"                                 " of InstructionFormat " + got(self.name), have("exactly one OPCODE type field"),                                  got(seq(fnames(self.non_slice_fields()))), has(got(len(self.fields_of_type(InstructionFieldType.OPCODE))) + " OPCODE type fields")                            ))
         for field, (slices, bits, overlapping, missing) in self.immediate_infos().items():
-            check(min(bits) == 0,                                             warning=True, message=fxmby("sliced IMMEDIATE type field " + got(field.name) + " in InstructionFormat " + got(self.name), "composed of slices that start at bit 0",                               got(seq(slices)),                          none("start at bit "   + got(min(bits)))                                                                            ))
+            check(min(bits) == 0,                                             warning=True, message=fxmby("sliced IMMEDIATE type field " + got(field.name) + " in InstructionFormat " + got(self.name), "composed of slices that start at bit 0",                               got(seq(slices)),                          none("start at bit "   + got(min(bits)))                                                                           ))
 
     def underlying_fields(self, separated: bool = False) -> tuple[InstructionField, ...] | tuple[tuple[InstructionField, ...], tuple[InstructionField, ...]]:
         fields     = []
@@ -220,16 +221,51 @@ class InstructionFormat:
 
         return result
 
-    def non_slice_fields    (self                            ) -> tuple[InstructionField, ...]: return tuple(field for field in self.underlying_fields(separated=True)[0]                            )
-    def fields_of_type      (self, type: InstructionFieldType) -> tuple[InstructionField, ...]: return tuple(field for field in self.underlying_fields(separated=True)[0] if field.type is type      )
-    def specializable_fields(self                            ) -> tuple[InstructionField, ...]: return tuple(field for field in self.underlying_fields(separated=True)[0] if field.is_specializable())
+    def field_width (self, field: InstructionField | Jam | Slice) -> int:
+        if type(field) is InstructionField:
+            return field.width
+        if type(field) is InstructionFieldSpecialization:
+            return field.field.width
+        if type(field) is tuple:
+            return field[2] - field[1] + 1
+
+    def field_offset(self, field: InstructionField | Jam | Slice) -> int:
+        offset = 0
+        for f in self.fields:
+            if f is field:
+                return offset
+            offset += self.field_width(f)
+
+    def instruction_width(self) -> int:
+        return sum(self.field_width(field) for field in self.fields)
+
+    def encoding(self) -> tuple[int, int]:
+        val  = 0
+        mask = 0
+        for field in self.fields:
+            if type(field) is InstructionField and field.is_fixed():
+                val  |= field.value        << self.field_offset(field)
+                mask |= field.mask()       << self.field_offset(field)
+            if type(field) is InstructionField and field.is_specializable():
+                mask |= field.mask()       << self.field_offset(field)
+            if type(field) is InstructionFieldSpecialization:
+                val  |= field.value        << self.field_offset(field)
+                mask |= field.field.mask() << self.field_offset(field)
+        return (val, mask)
+
+    def non_slice_fields    (self                            ) -> tuple[InstructionField, ...]: return tuple(field for field in self.underlying_fields(separated=True)[0]                              )
+    def fields_of_type      (self, type: InstructionFieldType) -> tuple[InstructionField, ...]: return tuple(field for field in self.underlying_fields(separated=True)[0] if field.type is type        )
+    def specializable_fields(self                            ) -> tuple[InstructionField, ...]: return tuple(field for field in self.underlying_fields(separated=True)[0] if field.is_specializable()  )
+    def jams                (self                            ) -> tuple[Jam,              ...]: return tuple(field for field in self.fields if type(field) is InstructionFieldSpecialization           )
+    def non_slice_arguments (self                            ) -> tuple[InstructionField, ...]: return tuple(field for field in self.fields if type(field) is InstructionField and not field.is_fixed())
+    def arguments           (self                            ) -> tuple[InstructionField, ...]: return self.non_slice_arguments() + tuple(field for field in self.immediate_infos())
 
     def symbol_name(self) -> str: return self.name.upper()
 
     def projected_names(self) -> tuple[str, ...]:
         return (self.symbol_name(), "INST_FMT_" + self.symbol_name())
 
-    # Potential helpers: total_width(), opcode_field(), arguments, normalized_fields, iter_segments(), has_opcode(), immediate_coverage(), has_overlapping_slices(), has_contiguous_slices(), duplicates(), contains_field(), field_sources()
+    # Potential helpers: total_width(), opcode_field(), normalized_fields, iter_segments(), has_opcode(), immediate_coverage(), has_overlapping_slices(), has_contiguous_slices(), duplicates(), contains_field(), field_sources()
 
 @validated
 @dataclass(frozen=True)
@@ -240,10 +276,22 @@ class Instruction:
     desc:   Description | None = None
 
     def __post_init__(self) -> None:
-        check(self.specialized_fields() == self.format.specializable_fields(), message=fxmby("specializations " "of Instruction " + got(self.name), "same as specializable fields of InstructionFormat " + got(self.format.name), got(seq(fnames(self.specialized_fields()))), "not same as " + got(seq(fnames(self.format.specializable_fields())))))
-        check(self.has_desc(),                                   warning=True, message=fxmby("description "     "of Instruction " + got(self.name), "present",                                                                    got(self.desc),                              "None"                                                               ))
+        check(same_elements(self.specialized_fields(), self.format.specializable_fields()), message=fxmby("specializations " "of Instruction " + got(self.name), "same as specializable fields of InstructionFormat " + got(self.format.name), got(seq(fnames(self.specialized_fields()))), "not same as " + got(seq(fnames(self.format.specializable_fields())))))
+        check(self.has_desc(),                                                warning=True, message=fxmby("description "     "of Instruction " + got(self.name), "present",                                                                    got(self.desc),                              "None"                                                               ))
 
-    def specialized_fields(self) -> tuple[InstructionField, ...]: return tuple(spec.field for spec in self.specs)
+    def encoding(self) -> tuple[int, int]:
+        val, mask = self.format.encoding()
+        for spec in self.specs:
+            val |= spec.value << self.format.field_offset(spec.field)
+        return (val, mask)
+
+    def encoding_overlaps(self, other: Instruction) -> bool:
+        sval, smask = self .encoding()
+        oval, omask = other.encoding()
+        return (sval & smask & omask) == (oval & omask & smask)
+
+    def specialized_fields(self) -> tuple[InstructionField, ...]: return tuple(spec.field for spec  in self.specs                                             )
+    def arguments         (self) -> tuple[InstructionField, ...]: return tuple(field      for field in self.format.arguments() if not field.is_specializable())
 
     def has_desc(self) -> bool: return self.desc is not None
 
@@ -252,7 +300,7 @@ class Instruction:
     def projected_names(self) -> tuple[str, ...]:
         return (self.symbol_name(), "OP_" + self.symbol_name(), "INST_" + self.symbol_name())
 
-    # Potential helpers: arguments, opcode, spec_fields, spec_by_fields, specialization_for_field, decode_key_fields, decode_key_values, decode_key(), effective_desc()
+    # Potential helpers: opcode, spec_fields, spec_by_fields, specialization_for_field, decode_key_fields, decode_key_values, decode_key(), effective_desc()
 
 @validated
 @dataclass(frozen=True)
