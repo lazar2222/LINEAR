@@ -1,4 +1,4 @@
-from definitions import *
+from architecture import *
 
 # Architecture definition
 # Base:       RV32I
@@ -152,62 +152,62 @@ SYS_CCC       = InstructionFieldSpecialization("ccc",    0b0000_0001_0000, SYS) 
 
 # Instructions
 ## RV32I
-LUI    = Instruction("lui",    U, (OPCODE_LUI,                                          ), "R[rd] =  0 + (simm & 0xFFFF_F000)"                                     )
-AUIPC  = Instruction("auipc",  U, (OPCODE_AUIPC,                                        ), "R[rd] = PC + (simm & 0xFFFF_F000)"                                     )
-JAL    = Instruction("jal",    J, (OPCODE_JAL,                                          ), "R[rd] = PC + 4; PC += (     0 + signext(simm & 0x001F_FFFE)) & ~1"     )
-JALR   = Instruction("jalr",   I, (OPCODE_JALR,              FUNCT3_JALR                ), "R[rd] = PC + 4; PC  = (R[rs1] + signext(simm & 0x0000_0FFF)) & ~1"     )
-BEQ    = Instruction("beq",    B, (OPCODE_BRANCH,            FUNCT3_BEQ                 ), "PC += (R[rs1] == R[rs2]) ? signext(simm & 0x0000_1FFE) : 4"            )
-BNE    = Instruction("bne",    B, (OPCODE_BRANCH,            FUNCT3_BNE                 ), "PC += (R[rs1] != R[rs2]) ? signext(simm & 0x0000_1FFE) : 4"            )
-BLT    = Instruction("blt",    B, (OPCODE_BRANCH,            FUNCT3_BLT                 ), "PC += (R[rs1] <  R[rs2]) ? signext(simm & 0x0000_1FFE) : 4 (signed)"   )
-BGE    = Instruction("bge",    B, (OPCODE_BRANCH,            FUNCT3_BGE                 ), "PC += (R[rs1] >= R[rs2]) ? signext(simm & 0x0000_1FFE) : 4 (signed)"   )
-BLTU   = Instruction("bltu",   B, (OPCODE_BRANCH,            FUNCT3_BLTU                ), "PC += (R[rs1] <  R[rs2]) ? signext(simm & 0x0000_1FFE) : 4 (unsigned)" )
-BGEU   = Instruction("bgeu",   B, (OPCODE_BRANCH,            FUNCT3_BGEU                ), "PC += (R[rs1] >= R[rs2]) ? signext(simm & 0x0000_1FFE) : 4 (unsigned)" )
-LB     = Instruction("lb",     I, (OPCODE_LOAD,              FUNCT3_B                   ), "R[rd] = signext(M[R[rs1] + signext(simm & 0x0000_0FFF)] & 0x0000_00FF)")
-LH     = Instruction("lh",     I, (OPCODE_LOAD,              FUNCT3_H                   ), "R[rd] = signext(M[R[rs1] + signext(simm & 0x0000_0FFF)] & 0x0000_FFFF)")
-LW     = Instruction("lw",     I, (OPCODE_LOAD,              FUNCT3_W                   ), "R[rd] = signext(M[R[rs1] + signext(simm & 0x0000_0FFF)] & 0xFFFF_FFFF)")
-LBU    = Instruction("lbu",    I, (OPCODE_LOAD,              FUNCT3_BU                  ), "R[rd] = zeroext(M[R[rs1] + signext(simm & 0x0000_0FFF)] & 0x0000_00FF)")
-LHU    = Instruction("lhu",    I, (OPCODE_LOAD,              FUNCT3_HU                  ), "R[rd] = zeroext(M[R[rs1] + signext(simm & 0x0000_0FFF)] & 0x0000_FFFF)")
-SB     = Instruction("sb",     S, (OPCODE_STORE,             FUNCT3_B                   ), "M[R[rs1] + signext(simm & 0x0000_0FFF)] = R[rs2] & 0x0000_00FF"        )
-SH     = Instruction("sh",     S, (OPCODE_STORE,             FUNCT3_H                   ), "M[R[rs1] + signext(simm & 0x0000_0FFF)] = R[rs2] & 0x0000_FFFF"        )
-SW     = Instruction("sw",     S, (OPCODE_STORE,             FUNCT3_W                   ), "M[R[rs1] + signext(simm & 0x0000_0FFF)] = R[rs2] & 0xFFFF_FFFF"        )
-ADDI   = Instruction("addi",   I, (OPCODE_OP_IMM,            FUNCT3_ADD                 ), "R[rd] = (R[rs1] +  signext(simm & 0x0000_0FFF))"                       )
-SLTI   = Instruction("slti",   I, (OPCODE_OP_IMM,            FUNCT3_SLT                 ), "R[rd] = (R[rs1] <  signext(simm & 0x0000_0FFF)) ? 1 : 0 (signed)"      )
-SLTIU  = Instruction("sltiu",  I, (OPCODE_OP_IMM,            FUNCT3_SLTU                ), "R[rd] = (R[rs1] <  signext(simm & 0x0000_0FFF)) ? 1 : 0 (unsigned)"    )
-XORI   = Instruction("xori",   I, (OPCODE_OP_IMM,            FUNCT3_XOR                 ), "R[rd] = (R[rs1] ^  signext(simm & 0x0000_0FFF))"                       )
-ORI    = Instruction("ori",    I, (OPCODE_OP_IMM,            FUNCT3_OR                  ), "R[rd] = (R[rs1] |  signext(simm & 0x0000_0FFF))"                       )
-ANDI   = Instruction("andi",   I, (OPCODE_OP_IMM,            FUNCT3_AND                 ), "R[rd] = (R[rs1] &  signext(simm & 0x0000_0FFF))"                       )
-SLLI   = Instruction("slli",   H, (OPCODE_OP_IMM,            FUNCT3_SL,     FUNCT7_LOGIC), "R[rd] = (R[rs1] << zeroext(zimm & 0x0000_001F)) (logical)"             )
-SRLI   = Instruction("srli",   H, (OPCODE_OP_IMM,            FUNCT3_SR,     FUNCT7_LOGIC), "R[rd] = (R[rs1] >> zeroext(zimm & 0x0000_001F)) (logical)"             )
-SRAI   = Instruction("srai",   H, (OPCODE_OP_IMM,            FUNCT3_SR,     FUNCT7_ARITH), "R[rd] = (R[rs1] >> zeroext(zimm & 0x0000_001F)) (arithmetic)"          )
-ADD    = Instruction("add",    R, (OPCODE_OP,                FUNCT3_ADD,    FUNCT7_ADD  ), "R[rd] = (R[rs1] +  (R[rs2] & 0xFFFF_FFFF))"                            )
-SUB    = Instruction("sub",    R, (OPCODE_OP,                FUNCT3_ADD,    FUNCT7_SUB  ), "R[rd] = (R[rs1] -  (R[rs2] & 0xFFFF_FFFF))"                            )
-SLT    = Instruction("slt",    R, (OPCODE_OP,                FUNCT3_SLT,    FUNCT7_NORM ), "R[rd] = (R[rs1] <  (R[rs2] & 0xFFFF_FFFF)) ? 1 : 0 (signed)"           )
-SLTU   = Instruction("sltu",   R, (OPCODE_OP,                FUNCT3_SLTU,   FUNCT7_NORM ), "R[rd] = (R[rs1] <  (R[rs2] & 0xFFFF_FFFF)) ? 1 : 0 (unsigned)"         )
-XOR    = Instruction("xor",    R, (OPCODE_OP,                FUNCT3_XOR,    FUNCT7_NORM ), "R[rd] = (R[rs1] ^  (R[rs2] & 0xFFFF_FFFF))"                            )
-OR     = Instruction("or",     R, (OPCODE_OP,                FUNCT3_OR,     FUNCT7_NORM ), "R[rd] = (R[rs1] |  (R[rs2] & 0xFFFF_FFFF))"                            )
-AND    = Instruction("and",    R, (OPCODE_OP,                FUNCT3_AND,    FUNCT7_NORM ), "R[rd] = (R[rs1] &  (R[rs2] & 0xFFFF_FFFF))"                            )
-SLL    = Instruction("sll",    R, (OPCODE_OP,                FUNCT3_SL,     FUNCT7_LOGIC), "R[rd] = (R[rs1] << (R[rs2] & 0x0000_001F)) (logical)"                  )
-SRL    = Instruction("srl",    R, (OPCODE_OP,                FUNCT3_SR,     FUNCT7_LOGIC), "R[rd] = (R[rs1] >> (R[rs2] & 0x0000_001F)) (logical)"                  )
-SRA    = Instruction("sra",    R, (OPCODE_OP,                FUNCT3_SR,     FUNCT7_ARITH), "R[rd] = (R[rs1] >> (R[rs2] & 0x0000_001F)) (arithmetic)"               )
+LUI    = Instruction("lui",    U, (OPCODE_LUI,                                          ), "R[rd] =  0 + (simm & 0xffff_f000)"                                     )
+AUIPC  = Instruction("auipc",  U, (OPCODE_AUIPC,                                        ), "R[rd] = PC + (simm & 0xffff_f000)"                                     )
+JAL    = Instruction("jal",    J, (OPCODE_JAL,                                          ), "R[rd] = PC + 4; PC += (     0 + signext(simm & 0x001f_fffe)) & ~1"     )
+JALR   = Instruction("jalr",   I, (OPCODE_JALR,              FUNCT3_JALR                ), "R[rd] = PC + 4; PC  = (R[rs1] + signext(simm & 0x0000_0fff)) & ~1"     )
+BEQ    = Instruction("beq",    B, (OPCODE_BRANCH,            FUNCT3_BEQ                 ), "PC += (R[rs1] == R[rs2]) ? signext(simm & 0x0000_1ffe) : 4"            )
+BNE    = Instruction("bne",    B, (OPCODE_BRANCH,            FUNCT3_BNE                 ), "PC += (R[rs1] != R[rs2]) ? signext(simm & 0x0000_1ffe) : 4"            )
+BLT    = Instruction("blt",    B, (OPCODE_BRANCH,            FUNCT3_BLT                 ), "PC += (R[rs1] <  R[rs2]) ? signext(simm & 0x0000_1ffe) : 4 (signed)"   )
+BGE    = Instruction("bge",    B, (OPCODE_BRANCH,            FUNCT3_BGE                 ), "PC += (R[rs1] >= R[rs2]) ? signext(simm & 0x0000_1ffe) : 4 (signed)"   )
+BLTU   = Instruction("bltu",   B, (OPCODE_BRANCH,            FUNCT3_BLTU                ), "PC += (R[rs1] <  R[rs2]) ? signext(simm & 0x0000_1ffe) : 4 (unsigned)" )
+BGEU   = Instruction("bgeu",   B, (OPCODE_BRANCH,            FUNCT3_BGEU                ), "PC += (R[rs1] >= R[rs2]) ? signext(simm & 0x0000_1ffe) : 4 (unsigned)" )
+LB     = Instruction("lb",     I, (OPCODE_LOAD,              FUNCT3_B                   ), "R[rd] = signext(M[R[rs1] + signext(simm & 0x0000_0fff)] & 0x0000_00ff)")
+LH     = Instruction("lh",     I, (OPCODE_LOAD,              FUNCT3_H                   ), "R[rd] = signext(M[R[rs1] + signext(simm & 0x0000_0fff)] & 0x0000_ffff)")
+LW     = Instruction("lw",     I, (OPCODE_LOAD,              FUNCT3_W                   ), "R[rd] = signext(M[R[rs1] + signext(simm & 0x0000_0fff)] & 0xffff_ffff)")
+LBU    = Instruction("lbu",    I, (OPCODE_LOAD,              FUNCT3_BU                  ), "R[rd] = zeroext(M[R[rs1] + signext(simm & 0x0000_0fff)] & 0x0000_00ff)")
+LHU    = Instruction("lhu",    I, (OPCODE_LOAD,              FUNCT3_HU                  ), "R[rd] = zeroext(M[R[rs1] + signext(simm & 0x0000_0fff)] & 0x0000_ffff)")
+SB     = Instruction("sb",     S, (OPCODE_STORE,             FUNCT3_B                   ), "M[R[rs1] + signext(simm & 0x0000_0fff)] = R[rs2] & 0x0000_00ff"        )
+SH     = Instruction("sh",     S, (OPCODE_STORE,             FUNCT3_H                   ), "M[R[rs1] + signext(simm & 0x0000_0fff)] = R[rs2] & 0x0000_ffff"        )
+SW     = Instruction("sw",     S, (OPCODE_STORE,             FUNCT3_W                   ), "M[R[rs1] + signext(simm & 0x0000_0fff)] = R[rs2] & 0xffff_ffff"        )
+ADDI   = Instruction("addi",   I, (OPCODE_OP_IMM,            FUNCT3_ADD                 ), "R[rd] = (R[rs1] +  signext(simm & 0x0000_0fff))"                       )
+SLTI   = Instruction("slti",   I, (OPCODE_OP_IMM,            FUNCT3_SLT                 ), "R[rd] = (R[rs1] <  signext(simm & 0x0000_0fff)) ? 1 : 0 (signed)"      )
+SLTIU  = Instruction("sltiu",  I, (OPCODE_OP_IMM,            FUNCT3_SLTU                ), "R[rd] = (R[rs1] <  signext(simm & 0x0000_0fff)) ? 1 : 0 (unsigned)"    )
+XORI   = Instruction("xori",   I, (OPCODE_OP_IMM,            FUNCT3_XOR                 ), "R[rd] = (R[rs1] ^  signext(simm & 0x0000_0fff))"                       )
+ORI    = Instruction("ori",    I, (OPCODE_OP_IMM,            FUNCT3_OR                  ), "R[rd] = (R[rs1] |  signext(simm & 0x0000_0fff))"                       )
+ANDI   = Instruction("andi",   I, (OPCODE_OP_IMM,            FUNCT3_AND                 ), "R[rd] = (R[rs1] &  signext(simm & 0x0000_0fff))"                       )
+SLLI   = Instruction("slli",   H, (OPCODE_OP_IMM,            FUNCT3_SL,     FUNCT7_LOGIC), "R[rd] = (R[rs1] << zeroext(zimm & 0x0000_001f)) (logical)"             )
+SRLI   = Instruction("srli",   H, (OPCODE_OP_IMM,            FUNCT3_SR,     FUNCT7_LOGIC), "R[rd] = (R[rs1] >> zeroext(zimm & 0x0000_001f)) (logical)"             )
+SRAI   = Instruction("srai",   H, (OPCODE_OP_IMM,            FUNCT3_SR,     FUNCT7_ARITH), "R[rd] = (R[rs1] >> zeroext(zimm & 0x0000_001f)) (arithmetic)"          )
+ADD    = Instruction("add",    R, (OPCODE_OP,                FUNCT3_ADD,    FUNCT7_ADD  ), "R[rd] = (R[rs1] +  (R[rs2] & 0xffff_ffff))"                            )
+SUB    = Instruction("sub",    R, (OPCODE_OP,                FUNCT3_ADD,    FUNCT7_SUB  ), "R[rd] = (R[rs1] -  (R[rs2] & 0xffff_ffff))"                            )
+SLT    = Instruction("slt",    R, (OPCODE_OP,                FUNCT3_SLT,    FUNCT7_NORM ), "R[rd] = (R[rs1] <  (R[rs2] & 0xffff_ffff)) ? 1 : 0 (signed)"           )
+SLTU   = Instruction("sltu",   R, (OPCODE_OP,                FUNCT3_SLTU,   FUNCT7_NORM ), "R[rd] = (R[rs1] <  (R[rs2] & 0xffff_ffff)) ? 1 : 0 (unsigned)"         )
+XOR    = Instruction("xor",    R, (OPCODE_OP,                FUNCT3_XOR,    FUNCT7_NORM ), "R[rd] = (R[rs1] ^  (R[rs2] & 0xffff_ffff))"                            )
+OR     = Instruction("or",     R, (OPCODE_OP,                FUNCT3_OR,     FUNCT7_NORM ), "R[rd] = (R[rs1] |  (R[rs2] & 0xffff_ffff))"                            )
+AND    = Instruction("and",    R, (OPCODE_OP,                FUNCT3_AND,    FUNCT7_NORM ), "R[rd] = (R[rs1] &  (R[rs2] & 0xffff_ffff))"                            )
+SLL    = Instruction("sll",    R, (OPCODE_OP,                FUNCT3_SL,     FUNCT7_LOGIC), "R[rd] = (R[rs1] << (R[rs2] & 0x0000_001f)) (logical)"                  )
+SRL    = Instruction("srl",    R, (OPCODE_OP,                FUNCT3_SR,     FUNCT7_LOGIC), "R[rd] = (R[rs1] >> (R[rs2] & 0x0000_001f)) (logical)"                  )
+SRA    = Instruction("sra",    R, (OPCODE_OP,                FUNCT3_SR,     FUNCT7_ARITH), "R[rd] = (R[rs1] >> (R[rs2] & 0x0000_001f)) (arithmetic)"               )
 FENCE  = Instruction("fence",  Y, (OPCODE_MISC_MEM,          FUNCT3_FENCE,  SYS_FENCE   ), "Fence"                                                                 )
 ECALL  = Instruction("ecall",  Y, (OPCODE_SYSTEM,            FUNCT3_PRIV,   SYS_ECALL   ), "Environment call"                                                      )
 EBREAK = Instruction("ebreak", Y, (OPCODE_SYSTEM,            FUNCT3_PRIV,   SYS_EBREAK  ), "Environment break"                                                     )
 ## M
-MUL    = Instruction("mul",    R, (OPCODE_OP,                FUNCT3_MUL,    FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >>  0) & 0xFFFF_FFFF"                       )
-MULH   = Instruction("mulh",   R, (OPCODE_OP,                FUNCT3_MULH,   FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >> 32) & 0xFFFF_FFFF (signed, signed)"      )
-MULHSU = Instruction("mulhsu", R, (OPCODE_OP,                FUNCT3_MULHSU, FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >> 32) & 0xFFFF_FFFF (signed, unsigned)"    )
-MULHU  = Instruction("mulhu",  R, (OPCODE_OP,                FUNCT3_MULHU,  FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >> 32) & 0xFFFF_FFFF (unsigned, unsigned)"  )
-DIV    = Instruction("div",    R, (OPCODE_OP,                FUNCT3_DIV,    FUNCT7_M    ), "R[rd] = ((R[rs1] / R[rs2]) >>  0) & 0xFFFF_FFFF (signed)"              )
-DIVU   = Instruction("divu",   R, (OPCODE_OP,                FUNCT3_DIVU,   FUNCT7_M    ), "R[rd] = ((R[rs1] / R[rs2]) >>  0) & 0xFFFF_FFFF (unsigned)"            )
-REM    = Instruction("rem",    R, (OPCODE_OP,                FUNCT3_REM,    FUNCT7_M    ), "R[rd] = ((R[rs1] % R[rs2]) >>  0) & 0xFFFF_FFFF (signed)"              )
-REMU   = Instruction("remu",   R, (OPCODE_OP,                FUNCT3_REMU,   FUNCT7_M    ), "R[rd] = ((R[rs1] % R[rs2]) >>  0) & 0xFFFF_FFFF (unsigned)"            )
+MUL    = Instruction("mul",    R, (OPCODE_OP,                FUNCT3_MUL,    FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >>  0) & 0xffff_ffff"                       )
+MULH   = Instruction("mulh",   R, (OPCODE_OP,                FUNCT3_MULH,   FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >> 32) & 0xffff_ffff (signed, signed)"      )
+MULHSU = Instruction("mulhsu", R, (OPCODE_OP,                FUNCT3_MULHSU, FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >> 32) & 0xffff_ffff (signed, unsigned)"    )
+MULHU  = Instruction("mulhu",  R, (OPCODE_OP,                FUNCT3_MULHU,  FUNCT7_M    ), "R[rd] = ((R[rs1] * R[rs2]) >> 32) & 0xffff_ffff (unsigned, unsigned)"  )
+DIV    = Instruction("div",    R, (OPCODE_OP,                FUNCT3_DIV,    FUNCT7_M    ), "R[rd] = ((R[rs1] / R[rs2]) >>  0) & 0xffff_ffff (signed)"              )
+DIVU   = Instruction("divu",   R, (OPCODE_OP,                FUNCT3_DIVU,   FUNCT7_M    ), "R[rd] = ((R[rs1] / R[rs2]) >>  0) & 0xffff_ffff (unsigned)"            )
+REM    = Instruction("rem",    R, (OPCODE_OP,                FUNCT3_REM,    FUNCT7_M    ), "R[rd] = ((R[rs1] % R[rs2]) >>  0) & 0xffff_ffff (signed)"              )
+REMU   = Instruction("remu",   R, (OPCODE_OP,                FUNCT3_REMU,   FUNCT7_M    ), "R[rd] = ((R[rs1] % R[rs2]) >>  0) & 0xffff_ffff (unsigned)"            )
 ## Zicsr
 CSRRW  = Instruction("csrrw",  C, (OPCODE_SYSTEM,            FUNCT3_CSRRW               ), "R[rd] = CSR[csr]; CSR[csr]  =  R[rs1]"                                 )
 CSRRS  = Instruction("csrrs",  C, (OPCODE_SYSTEM,            FUNCT3_CSRRS               ), "R[rd] = CSR[csr]; CSR[csr] |=  R[rs1]"                                 )
 CSRRC  = Instruction("csrrc",  C, (OPCODE_SYSTEM,            FUNCT3_CSRRC               ), "R[rd] = CSR[csr]; CSR[csr] &= ~R[rs1]"                                 )
-CSRRWI = Instruction("csrrwi", D, (OPCODE_SYSTEM,            FUNCT3_CSRRWI              ), "R[rd] = CSR[csr]; CSR[csr]  =  (zimm & 0x0000_001F)"                   )
-CSRRSI = Instruction("csrrsi", D, (OPCODE_SYSTEM,            FUNCT3_CSRRSI              ), "R[rd] = CSR[csr]; CSR[csr] |=  (zimm & 0x0000_001F)"                   )
-CSRRCI = Instruction("csrrci", D, (OPCODE_SYSTEM,            FUNCT3_CSRRCI              ), "R[rd] = CSR[csr]; CSR[csr] &= ~(zimm & 0x0000_001F)"                   )
+CSRRWI = Instruction("csrrwi", D, (OPCODE_SYSTEM,            FUNCT3_CSRRWI              ), "R[rd] = CSR[csr]; CSR[csr]  =  (zimm & 0x0000_001f)"                   )
+CSRRSI = Instruction("csrrsi", D, (OPCODE_SYSTEM,            FUNCT3_CSRRSI              ), "R[rd] = CSR[csr]; CSR[csr] |=  (zimm & 0x0000_001f)"                   )
+CSRRCI = Instruction("csrrci", D, (OPCODE_SYSTEM,            FUNCT3_CSRRCI              ), "R[rd] = CSR[csr]; CSR[csr] &= ~(zimm & 0x0000_001f)"                   )
 ## Zicc
 CCEQ   = Instruction("cceq",   N, (OPCODE_BRANCH,   CMP_EQ,  FUNCT3_CC,     FUNCT7_NORM ), "CC = (R[rs1] == R[rs2])"                                               )
 CCNE   = Instruction("ccne",   N, (OPCODE_BRANCH,   CMP_NE,  FUNCT3_CC,     FUNCT7_NORM ), "CC = (R[rs1] != R[rs2])"                                               )
@@ -215,12 +215,12 @@ CCLT   = Instruction("cclt",   N, (OPCODE_BRANCH,   CMP_LT,  FUNCT3_CC,     FUNC
 CCGE   = Instruction("ccge",   N, (OPCODE_BRANCH,   CMP_GE,  FUNCT3_CC,     FUNCT7_NORM ), "CC = (R[rs1] >= R[rs2]) (signed)"                                      )
 CCLTU  = Instruction("ccltu",  N, (OPCODE_BRANCH,   CMP_LTU, FUNCT3_CC,     FUNCT7_NORM ), "CC = (R[rs1] <  R[rs2]) (unsigned)"                                    )
 CCGEU  = Instruction("ccgeu",  N, (OPCODE_BRANCH,   CMP_GEU, FUNCT3_CC,     FUNCT7_NORM ), "CC = (R[rs1] >= R[rs2]) (unsigned)"                                    )
-CCEQI  = Instruction("cceqi",  M, (OPCODE_BRANCH,   CMP_EQ,  FUNCT3_CCI                 ), "CC = (R[rs1] == signext(simm & 0x0000_0FFF))"                          )
-CCNEI  = Instruction("ccnei",  M, (OPCODE_BRANCH,   CMP_NE,  FUNCT3_CCI                 ), "CC = (R[rs1] != signext(simm & 0x0000_0FFF))"                          )
-CCLTI  = Instruction("cclti",  M, (OPCODE_BRANCH,   CMP_LT,  FUNCT3_CCI                 ), "CC = (R[rs1] <  signext(simm & 0x0000_0FFF)) (signed)"                 )
-CCGEI  = Instruction("ccgei",  M, (OPCODE_BRANCH,   CMP_GE,  FUNCT3_CCI                 ), "CC = (R[rs1] >= signext(simm & 0x0000_0FFF)) (signed)"                 )
-CCLTUI = Instruction("ccltui", M, (OPCODE_BRANCH,   CMP_LTU, FUNCT3_CCI                 ), "CC = (R[rs1] <  signext(simm & 0x0000_0FFF)) (unsigned)"               )
-CCGEUI = Instruction("ccgeui", M, (OPCODE_BRANCH,   CMP_GEU, FUNCT3_CCI                 ), "CC = (R[rs1] >= signext(simm & 0x0000_0FFF)) (unsigned)"               )
+CCEQI  = Instruction("cceqi",  M, (OPCODE_BRANCH,   CMP_EQ,  FUNCT3_CCI                 ), "CC = (R[rs1] == signext(simm & 0x0000_0fff))"                          )
+CCNEI  = Instruction("ccnei",  M, (OPCODE_BRANCH,   CMP_NE,  FUNCT3_CCI                 ), "CC = (R[rs1] != signext(simm & 0x0000_0fff))"                          )
+CCLTI  = Instruction("cclti",  M, (OPCODE_BRANCH,   CMP_LT,  FUNCT3_CCI                 ), "CC = (R[rs1] <  signext(simm & 0x0000_0fff)) (signed)"                 )
+CCGEI  = Instruction("ccgei",  M, (OPCODE_BRANCH,   CMP_GE,  FUNCT3_CCI                 ), "CC = (R[rs1] >= signext(simm & 0x0000_0fff)) (signed)"                 )
+CCLTUI = Instruction("ccltui", M, (OPCODE_BRANCH,   CMP_LTU, FUNCT3_CCI                 ), "CC = (R[rs1] <  signext(simm & 0x0000_0fff)) (unsigned)"               )
+CCGEUI = Instruction("ccgeui", M, (OPCODE_BRANCH,   CMP_GEU, FUNCT3_CCI                 ), "CC = (R[rs1] >= signext(simm & 0x0000_0fff)) (unsigned)"               )
 CCC    = Instruction("ccc",    Y, (OPCODE_SYSTEM,            FUNCT3_PRIV,   SYS_CCC     ), "CC = 1"                                                                )
 ## Ziwarp
 HALT   = Instruction("halt",   Y, (OPCODE_SYSTEM,            FUNCT3_PRIV,   SYS_HALT    ), "End the kernel"                                                        )
@@ -263,22 +263,17 @@ X31 = IndexEntry("x31", 31, INDEX_REG, "r3",   desc="Reduction register 3") # (Z
 ## Custom read/write
 COMPATMODE = IndexEntry("compatmode", 0x800, INDEX_CSR, desc="bit 0: Enable reduction registers; bit 1: Trap on control flow divergence") # Zxlinear
 DEBUGMODE  = IndexEntry("debugmode",  0x801, INDEX_CSR, desc="bit 0: Core halt; bit 1: Single step enabled"                             ) # Zxlinear
-THREADID   = IndexEntry("threadid",   0x80A, INDEX_CSR, desc="Thread id, base + laneid"                                                 ) # Ziwarp
-GRIDID     = IndexEntry("gridid",     0x80B, INDEX_CSR, desc="Grid id, runtime controlled"                                              ) # Ziwarp
+THREADID   = IndexEntry("threadid",   0x80a, INDEX_CSR, desc="Thread id, base + laneid"                                                 ) # Ziwarp
+GRIDID     = IndexEntry("gridid",     0x80b, INDEX_CSR, desc="Grid id, runtime controlled"                                              ) # Ziwarp
 CCFLAGS    = IndexEntry("ccflags",    0x810, INDEX_CSR, desc="Condition code flags, one bit per lane"                                   ) # Zicc
 ## Custom read-only
-COREID     = IndexEntry("coreid",     0xCCA, INDEX_CSR, desc="Core id"                                                                  ) # Ziwarp
-LANEID     = IndexEntry("laneid",     0xCCB, INDEX_CSR, desc="Lane id"                                                                  ) # Ziwarp
+COREID     = IndexEntry("coreid",     0xcca, INDEX_CSR, desc="Core id"                                                                  ) # Ziwarp
+LANEID     = IndexEntry("laneid",     0xccb, INDEX_CSR, desc="Lane id"                                                                  ) # Ziwarp
 ## Standard read-only
-CYCLE      = IndexEntry("cycle",      0xC00, INDEX_CSR, desc="Cycle count"                                                              )
-TIME       = IndexEntry("time",       0xC01, INDEX_CSR, desc="Time stamp"                                                               )
-INSTRET    = IndexEntry("instret",    0xC02, INDEX_CSR, desc="Instruction retired"                                                      )
+CYCLE      = IndexEntry("cycle",      0xc00, INDEX_CSR, desc="Cycle count"                                                              )
+TIME       = IndexEntry("time",       0xc01, INDEX_CSR, desc="Time stamp"                                                               )
+INSTRET    = IndexEntry("instret",    0xc02, INDEX_CSR, desc="Instruction retired"                                                      )
 ## Standard read-only high 32 bits
-CYCLEH     = IndexEntry("cycleh",     0xC80, INDEX_CSR, desc="High cycle count"                                                         )
-TIMEH      = IndexEntry("timeh",      0xC81, INDEX_CSR, desc="High time stamp"                                                          )
-INSTRETH   = IndexEntry("instreth",   0xC82, INDEX_CSR, desc="High instruction retired"                                                 )
-
-# Generation hints
-GENVARS = GenerationHints(
-    emit_macro = "emit",
-)
+CYCLEH     = IndexEntry("cycleh",     0xc80, INDEX_CSR, desc="High cycle count"                                                         )
+TIMEH      = IndexEntry("timeh",      0xc81, INDEX_CSR, desc="High time stamp"                                                          )
+INSTRETH   = IndexEntry("instreth",   0xc82, INDEX_CSR, desc="High instruction retired"                                                 )
